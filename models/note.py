@@ -4,12 +4,19 @@ from models.values import Field, Tag, Title
 
 
 class Note:
-    def __init__(self, title: str, body: str = "", tags: set[Tag] = {}):
+    def __init__(
+        self,
+        title: str,
+        body: str = "",
+        tags: set[Tag] | None = None,
+        created_at: DateTime | None = DateTime.now(),
+        updated_at: DateTime | None = None,
+    ):
         self.title: Title = Title(title.strip())
         self.body: Field = Field(body.strip())
-        self.tags: set[Tag] = tags
-        self.created_at: DateTime = DateTime.now()
-        self.updated_at: DateTime = None
+        self.tags: set[Tag] = tags if tags is not None else set()
+        self.created_at: DateTime = created_at
+        self.updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
 
     def __str__(self) -> str:
         return (
@@ -20,48 +27,57 @@ class Note:
             f"Updated at: {self.updated_at}"
         )
 
-    def edit_title(self, new_title: str) -> Self:
+    def edit_title(self, new_title: str) -> None:
         """Edit the title of the note"""
         self.title = Title(new_title.strip())
         self.updated_at = DateTime.now()
 
         return self
 
-    def edit_body(self, new_body: str) -> Self:
+    def edit_body(self, new_body: str) -> None:
         """Edit the body of the note"""
-        self.body = Title(new_body)
+        self.body = Field(new_body.strip())
         self.updated_at = DateTime.now()
 
         return self
 
-    def add_tags(self, *tags: Tag) -> Self:
+    def add_tags(self, *tags: str) -> None:
         """Add tags to the note"""
-        updated = False
+        if not tags:
+            return
 
         for tag in tags:
-            if tag in self.tags:
-                continue  # to track if it's required to updated_at
-
-            updated = True
             self.tags.add(Tag(tag))
 
-        if updated:
-            self.updated_at = DateTime.now()
+        self.updated_at = DateTime.now()
 
-        return self
-
-    def remove_tags(self, *tags: Tag) -> Self:
+    def remove_tags(self, *tags: str) -> None:
         """Remove tags from the note"""
-        updated = False
+        if not tags:
+            return
 
         for tag in tags:
-            if tag not in self.tags:
-                continue  # to track if it's required to updated_at
+            self.tags.remove(Tag(tag))
 
-            updated = True
-            self.tags.remove(tag)
+        self.updated_at = DateTime.now()
 
-        if updated:
-            self.updated_at = DateTime.now()
+    def to_dict(self) -> dict:
+        """Convert the note to a dictionary"""
+        return {
+            "title": self.title,
+            "body": self.body,
+            "tags": list(self.tags),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
 
-        return self
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """Convert the dictionary to a note"""
+        return cls(
+            title=data["title"],
+            body=data["body"],
+            tags=set(data["tags"]),
+            created_at=data["created_at"],
+            updated_at=data["updated_at"],
+        )
