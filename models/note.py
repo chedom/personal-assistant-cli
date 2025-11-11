@@ -41,23 +41,15 @@ class Note:
 
         return self
 
-    def add_tags(self, *tags: str) -> None:
+    def edit_tags(self, *tags: str) -> None:
         """Add tags to the note"""
         if not tags:
             return
 
+        self.tags.clear()
+
         for tag in tags:
             self.tags.add(Tag(tag))
-
-        self.updated_at = DateTime.now()
-
-    def remove_tags(self, *tags: str) -> None:
-        """Remove tags from the note"""
-        if not tags:
-            return
-
-        for tag in tags:
-            self.tags.remove(Tag(tag))
 
         self.updated_at = DateTime.now()
 

@@ -16,11 +16,15 @@ class NotesRepository(Protocol):
         """Get all notes from the repository"""
         ...
 
-    def search_by_tags(self, *tags: Tag) -> Iterable[Note]:
+    def find_by_title(self, title_query: str)-> Iterable[Note]:
+        """Search for notes by title"""
+        ...
+
+    def find_by_tags(self, *tags: Tag) -> Iterable[Note]:
         """Search for notes by tags"""
         ...
 
-    def update(self, note: Note) -> None:
+    def save(self, note: Note) -> None:
         """Update a note in the repository"""
         ...
 
