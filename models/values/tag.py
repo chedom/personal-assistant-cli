@@ -10,7 +10,10 @@ class Tag(Field):
 
         super().__init__(tag)
 
-    @staticmethod   
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    @staticmethod
     def normalize(tag: str) -> str:
         """Normalize the tag"""
         tag = tag.strip().lower()  # "Work " -> "work"

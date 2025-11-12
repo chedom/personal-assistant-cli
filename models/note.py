@@ -1,75 +1,97 @@
-from typing import Self
+from typing import Self, Collection
 from datetime import datetime as DateTime
 from models.values import Field, Tag, Title
 
 
 class Note:
+    short_text_len = 30
+
     def __init__(
         self,
         title: str,
         body: str = "",
         tags: set[Tag] | None = None,
+        note_id: int | None = None,
         created_at: DateTime | None = DateTime.now(),
         updated_at: DateTime | None = None,
     ):
-        self.title: Title = Title(title.strip())
-        self.body: Field = Field(body.strip())
-        self.tags: set[Tag] = tags if tags is not None else set()
-        self.created_at: DateTime = created_at
-        self.updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
+        self.__title: Title = Title(title.strip())
+        self.__body: Field = Field(body.strip())
+        self.__tags: set[Tag] = tags if tags is not None else set()
+        self.__note_id: int = note_id
+        self.__created_at: DateTime = created_at
+        self.__updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
 
     def __str__(self) -> str:
         return (
-            f"Title: {self.title}\n"
-            f"Body: {self.body}\n"
-            f"Tags: {', '.join(self.tags)}\n"
-            f"Created at: {self.created_at}\n"
-            f"Updated at: {self.updated_at}"
+            f"ID: {self.__note_id}\n"
+            f"Title: {self.__title}\n"
+            f"Body: {self.__body}\n"
+            f"Tags: {', '.join(self.__tags)}\n"
+            f"Created at: {self.__created_at}\n"
+            f"Updated at: {self.__updated_at}"
         )
 
-    def edit_title(self, new_title: str) -> None:
-        """Edit the title of the note"""
-        self.title = Title(new_title.strip())
-        self.updated_at = DateTime.now()
+    def preview(self) -> str:
+        return (
+            f"{self.__note_id}, Title: {self.text_preview(self.__title)}\n"
+            f"{self.__updated_at} Body: {self.text_preview(self.__body)}\n"
+        )
+
+    @property
+    def note_id(self) -> int:
+        return self.__note_id
+
+    def contains(self, substr: str) -> bool:
+        return (substr in self.__title.value) or (substr in self.__body.value)
+
+    def count_matching_tags(self, tags: Collection[Tag]) -> int:
+        return len(self.__tags & set(tags))
+
+    def edit_note(
+        self,
+        new_title: str = None,
+        new_body: str = None,
+        new_tags: set[Tag] = None,
+    ):
+        if new_title is not None:
+            self.__title = Title(new_title.strip())
+
+        if new_body is not None:
+            self.__body = Field(new_body.strip())
+
+        if new_tags is not None:
+            self.__tags = new_tags
+
+        self.__updated_at = DateTime.now()
 
         return self
-
-    def edit_body(self, new_body: str) -> None:
-        """Edit the body of the note"""
-        self.body = Field(new_body.strip())
-        self.updated_at = DateTime.now()
-
-        return self
-
-    def edit_tags(self, *tags: str) -> None:
-        """Add tags to the note"""
-        if not tags:
-            return
-
-        self.tags.clear()
-
-        for tag in tags:
-            self.tags.add(Tag(tag))
-
-        self.updated_at = DateTime.now()
 
     def to_dict(self) -> dict:
         """Convert the note to a dictionary"""
         return {
-            "title": self.title,
-            "body": self.body,
-            "tags": list(self.tags),
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "title": self.__title,
+            "body": self.__body,
+            "tags": list(self.__tags),
+            "note_id": self.__note_id,
+            "created_at": self.__created_at,
+            "updated_at": self.__updated_at,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         """Convert the dictionary to a note"""
+        tags = {Tag(t) for t in data["tags"]}
         return cls(
             title=data["title"],
             body=data["body"],
-            tags=set(data["tags"]),
+            tags=tags,
+            note_id=data["note_id"],
             created_at=data["created_at"],
             updated_at=data["updated_at"],
         )
+
+    @classmethod
+    def text_preview(cls, text: str) -> str:
+        return text.split("\n", 1)[0][:cls.short_text_len]
+

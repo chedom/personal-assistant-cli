@@ -3,8 +3,8 @@ from models.note import Note
 
 
 class NotesStorage(Protocol):
-    def load(self) -> list[Note]:
+    def load(self) -> dict[int, Note]:
         ...
 
-    def save(self, notes: list[Note]) -> None:
+    def save(self, notes: dict[int, Note]) -> None:
         ...
