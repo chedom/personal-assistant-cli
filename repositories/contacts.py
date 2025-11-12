@@ -8,7 +8,7 @@ class ContactsRepository:
 
 
     def add(self, contact: Contact):
-        self._contacts[contact.name] = contact
+        self._contacts[contact.name.value] = contact
 
 
     def get(self, name : str) -> Contact:
