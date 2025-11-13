@@ -54,6 +54,14 @@ def del_phone(args, ctx: AppContext):
     ctx.contacts.del_phone(args[0], args[1])
 
 
+def del_contact(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError("del-contact command requires 1 argument: username")
+
+    ctx.contacts.del_contact(args[0])
+    return f"Contact {args[0]} deleted successfully"
+
+
 # ---------- NOTE COMMANDS ----------
 
 def add_note(args, ctx: AppContext):
@@ -179,6 +187,7 @@ def help_command(args, ctx: AppContext):
           "  set-email <username> <email>              - Set email to contact\n"
           "  set-address <username> <address>          - Set address to contact\n"
           "  del-phone <username> <phone>              - Delete phone from contact\n"
+          "  del-contact <username>                    - Delete contact\n"
           "  add-note <note>                           - Add note\n"
           "  close, exit                               - Exit the bot\n")
 
@@ -206,6 +215,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "set-birthday": set_birthday,
     "set-address": set_address,
     "del-phone": del_phone,
+    "del-contact": del_contact,
     # notes related cmd
     "add-note": add_note,
     "note": get_note,
