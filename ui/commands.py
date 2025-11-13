@@ -1,8 +1,7 @@
-from ast import arg
 import shlex
 from typing import Dict, List, Tuple, Callable
 from core.app_context import AppContext
-from repositories import notes_in_memory
+
 from ui.error_util import input_error
 
 from services import (
@@ -24,9 +23,28 @@ def add_contact(args, ctx: AppContext):
     if len(args) < 2:
         raise ValueError("add command requires 2 arguments: username and phone")
 
-    print('Not implemented yet')
+    ctx.contacts.add_contact(args[0], args[1])
 
-    # ctx.contact.add()
+
+def set_email(args, ctx: AppContext):
+    if len(args) < 2:
+        raise ValueError("set-email command requires 2 arguments: username and email")
+
+    ctx.contacts.set_email(args[0], args[1])
+
+
+def set_birthday(args, ctx: AppContext):
+    if len(args) < 2:
+        raise ValueError("set-birthday command requires 2 arguments: username and birthday")
+
+    ctx.contacts.set_birthday(args[0], args[1])
+
+
+def set_address(args, ctx: AppContext):
+    if len(args) < 2:
+        raise ValueError("set-address command requires 2 arguments: username and address")
+
+    ctx.contacts.set_address(args[0], args[1])
 
 
 # ---------- NOTE COMMANDS ----------
@@ -127,10 +145,10 @@ def delete_note(args, ctx: AppContext):
         raise ValueError("delete note command requires 1 argument: tags")
 
     note_id = int(args[0])
-
     ctx.notes.delete_note(DeleteReq(note_id=note_id))
 
     return f"Note {note_id} has been successfully deleted"
+
 
 def all_notes(args, ctx: AppContext):
     notes = ctx.notes.all()
@@ -148,11 +166,11 @@ def help_command(args, ctx: AppContext):
           "  change <username> <old_phone> <new_phone> - Update contact's phone\n"
           "  phone <username>                          - Show contact's phone number(s)\n"
           "  all                                       - Show all contacts\n"
-          "  add-birthday <username> <DD.MM.YYYY>      - Add birthday to contact\n"
+          "  set-birthday <username> <DD.MM.YYYY>      - Set birthday to contact\n"
           "  show-birthday <username>                  - Show contact's birthday\n"
           "  birthdays                                 - Show upcoming birthdays within next week\n"
-          "  add-email <username> <email>              - Add email to contact\n"
-          "  add-address <username> <address>          - Add address to contact\n"
+          "  set-email <username> <email>              - Set email to contact\n"
+          "  set-address <username> <address>          - Set address to contact\n"
           "  add-note <note>                           - Add note\n"
           "  close, exit                               - Exit the bot\n")
 
@@ -174,7 +192,11 @@ def parse_input(user_input: str) -> Tuple[str, List[str]]:
 
 commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "hello": lambda args, ctx: "How can I help you?",
+    # contact related cms
     "add": add_contact,
+    "set-email": set_email,
+    "set-birthday": set_birthday,
+    "set-address": set_address,
     # notes related cmd
     "add-note": add_note,
     "note": get_note,
