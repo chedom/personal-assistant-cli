@@ -6,3 +6,14 @@ from .birthday import Birthday
 from .address import Address
 from .tag import Tag
 from .title import Title
+
+__all__ = [
+    "Field",
+    "Name",
+    "Phone",
+    "Email",
+    "Birthday",
+    "Address",
+    "Tag",
+    "Title",
+]

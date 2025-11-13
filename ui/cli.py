@@ -32,7 +32,6 @@ def main():
             break
 
     notes_repository.flush()
-            
 
 
 if __name__ == "__main__":

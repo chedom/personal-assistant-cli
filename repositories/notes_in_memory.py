@@ -48,4 +48,3 @@ class NotesInMemoryRepository:
 
     def flush(self) -> None:
         self.__storage.save(self.__notes)
-
