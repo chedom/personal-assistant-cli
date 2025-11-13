@@ -100,4 +100,3 @@ class Note:
     @classmethod
     def field_preview(cls, field: Field) -> str:
         return field.value.split("\n", 1)[0][:cls.short_text_len]
-

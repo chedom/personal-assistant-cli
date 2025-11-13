@@ -14,11 +14,13 @@ class GetNoteReq:
     """Request to get a note"""
     note_id: int
 
+
 @dataclass(frozen=True)
 class EditTitleReq:
     """Request to edit a note"""
     note_id: int
     title: str
+
 
 @dataclass(frozen=True)
 class EditBodyReq:
@@ -26,16 +28,19 @@ class EditBodyReq:
     note_id: int
     body: str
 
+
 @dataclass(frozen=True)
 class EditTagsReq:
     """Request to edit a note"""
     note_id: int
     tags: list[str]
 
+
 @dataclass(frozen=True)
 class FindReq:
     """Request to find notes by title"""
     query: str
+
 
 @dataclass(frozen=True)
 class FindByTagsReq:
@@ -53,4 +58,3 @@ class SortByTagsReq:
 class DeleteReq:
     """Request to sort notes by tags"""
     note_id: int
-

@@ -28,21 +28,27 @@ def add_contact(args, ctx: AppContext):
 
 def set_email(args, ctx: AppContext):
     if len(args) < 2:
-        raise ValueError("set-email command requires 2 arguments: username and email")
+        raise ValueError(
+            "set-email command requires 2 arguments: username and email"
+        )
 
     ctx.contacts.set_email(args[0], args[1])
 
 
 def set_birthday(args, ctx: AppContext):
     if len(args) < 2:
-        raise ValueError("set-birthday command requires 2 arguments: username and birthday")
+        raise ValueError(
+            "set-birthday command requires 2 arguments: username and birthday"
+        )
 
     ctx.contacts.set_birthday(args[0], args[1])
 
 
 def set_address(args, ctx: AppContext):
     if len(args) < 2:
-        raise ValueError("set-address command requires 2 arguments: username and address")
+        raise ValueError(
+            "set-address command requires 2 arguments: username and address"
+        )
 
     ctx.contacts.set_address(args[0], args[1])
 
@@ -157,6 +163,9 @@ def all_notes(args, ctx: AppContext):
 
 
 # ---------- SYSTEM COMMANDS ----------
+
+
+# flake8: noqa: E501
 def help_command(args, ctx: AppContext):
     print("Welcome to the personal assistant tool!\n"
           "Available commands:\n"
@@ -173,7 +182,6 @@ def help_command(args, ctx: AppContext):
           "  set-address <username> <address>          - Set address to contact\n"
           "  add-note <note>                           - Add note\n"
           "  close, exit                               - Exit the bot\n")
-
 
 def exit_command(ctx: AppContext):
     # TODO: save records before close
@@ -208,7 +216,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "find-notes-tags": find_notes_by_tags,
     "sort-notes-tags": sort_notes_by_tags,
     "delete-note": delete_note,
-    
+
     "help": help_command,
 }
 
