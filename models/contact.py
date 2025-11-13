@@ -48,3 +48,12 @@ class Contact:
             parts.append(f"address: {self.address}")
 
         return ", ".join(parts)
+    
+    
+    def del_phone(self, phone: Phone):
+        for i, phone_number in enumerate(self.phones):
+            if phone_number == phone:
+                del self.phones[i]
+                return True
+        return False
+    

@@ -47,6 +47,13 @@ def set_address(args, ctx: AppContext):
     ctx.contacts.set_address(args[0], args[1])
 
 
+def del_phone(args, ctx: AppContext):
+    if len(args) < 2:
+        raise ValueError("del-phone command requires 2 arguments: username and phone")
+
+    ctx.contacts.del_phone(args[0], args[1])
+
+
 # ---------- NOTE COMMANDS ----------
 
 def add_note(args, ctx: AppContext):
@@ -171,6 +178,7 @@ def help_command(args, ctx: AppContext):
           "  birthdays                                 - Show upcoming birthdays within next week\n"
           "  set-email <username> <email>              - Set email to contact\n"
           "  set-address <username> <address>          - Set address to contact\n"
+          "  del-phone <username> <phone>              - Delete phone from contact\n"
           "  add-note <note>                           - Add note\n"
           "  close, exit                               - Exit the bot\n")
 
@@ -197,6 +205,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "set-email": set_email,
     "set-birthday": set_birthday,
     "set-address": set_address,
+    "del-phone": del_phone,
     # notes related cmd
     "add-note": add_note,
     "note": get_note,

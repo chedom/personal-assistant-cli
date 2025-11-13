@@ -53,6 +53,18 @@ class ContactsService:
         
         existing_contact.set_address(Address(address))
         self.repo.save()
-
+    
+    
+    def del_phone(self, name: str, phone: str) -> bool:
+        existing_contact = self.repo.get(name)
+        if not existing_contact:
+            raise KeyError(f"User with name {name} does not exist")
+        
+        phone_to_delete = Phone(phone)
+        if existing_contact.del_phone(phone_to_delete):
+            self.repo.save()
+            return True
+        else:
+            return False
 
     # TODO: implement other methods to deal with contacts service
