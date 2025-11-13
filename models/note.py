@@ -1,17 +1,103 @@
-from models.values import Field, Tag
+from typing import Self, Collection
+from datetime import datetime as DateTime
+from models.values import Field, Tag, Title
 
 
 class Note:
+    short_text_len = 30
 
-    def __init__(self, text: str):
-        if not text or not text.strip():
-            raise ValueError("Note cannot be empty")
-
-        self.text = Field(text.strip())
-        self.tags: list[Tag] = []
-
-    # TODO: Implement logic to add tags and update text
+    def __init__(
+        self,
+        title: str,
+        body: str = "",
+        tags: set[Tag] | None = None,
+        note_id: int | None = None,
+        created_at: DateTime | None = DateTime.now(),
+        updated_at: DateTime | None = None,
+    ):
+        self.__title: Title = Title(title.strip())
+        self.__body: Field = Field(body.strip())
+        self.__tags: set[Tag] = tags if tags is not None else set()
+        self.__note_id: int = note_id
+        self.__created_at: DateTime = created_at
+        self.__updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
 
     def __str__(self) -> str:
-        # TODO: Implement not preview
-        pass
+        return (
+            f"ID: {self.__note_id}\n"
+            f"Title: {self.__title}\n"
+            f"Body: {self.__body}\n"
+            f"Tags: {','.join([str(t) for t in self.__tags])}\n"
+            f"Created at: {self.__created_at:%Y-%m-%d}\n"
+            f"Updated at: {self.__updated_at:%Y-%m-%d}"
+        )
+
+    def preview(self) -> str:
+        return (
+            f"{self.__note_id}, Title: {self.field_preview(self.__title)}\n"
+            f"{self.__updated_at:%Y-%m-%d} Body: {self.field_preview(self.__body)}\n"  # noqa
+        )
+
+    @property
+    def note_id(self) -> int:
+        return self.__note_id
+
+    @property
+    def updated_at(self) -> DateTime:
+        return self.__updated_at
+
+    def contains(self, substr: str) -> bool:
+        substr = substr.strip().lower()
+        return substr in self.__title.value.lower() \
+            or substr in self.__body.value.lower()
+
+    def count_matching_tags(self, tags: Collection[Tag]) -> int:
+        return len(self.__tags & set(tags))
+
+    def edit_note(
+        self,
+        new_title: str = None,
+        new_body: str = None,
+        new_tags: set[Tag] = None,
+    ):
+        if new_title is not None:
+            self.__title = Title(new_title.strip())
+
+        if new_body is not None:
+            self.__body = Field(new_body.strip())
+
+        if new_tags is not None:
+            self.__tags = new_tags
+
+        self.__updated_at = DateTime.now()
+
+        return self
+
+    def to_dict(self) -> dict:
+        """Convert the note to a dictionary"""
+        return {
+            "title": self.__title.value,
+            "body": self.__body.value,
+            "tags": [v.value for v in self.__tags],
+            "note_id": self.__note_id,
+            "created_at": self.__created_at.isoformat(),
+            "updated_at": self.__updated_at.isoformat(),
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """Convert the dictionary to a note"""
+        tags = {Tag(t) for t in data["tags"]}
+        return cls(
+            title=data["title"],
+            body=data["body"],
+            tags=tags,
+            note_id=data["note_id"],
+            created_at=DateTime.fromisoformat(data["created_at"]),
+            updated_at=DateTime.fromisoformat(data["updated_at"]),
+        )
+
+    @classmethod
+    def field_preview(cls, field: Field) -> str:
+        return field.value.split("\n", 1)[0][:cls.short_text_len]
+

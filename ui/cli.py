@@ -2,18 +2,19 @@ from storage.contacts_storage import ContactsStorage
 from repositories.contacts import ContactsRepository
 from services.contacts_service import ContactsService
 
-from storage.notes_storage import NotesStorage
-from repositories.notes import NotesRepository
-from services.notes_service import NotesService
+from services import NotesService
+from ui.factory import create_notes_repo
 
 from core.app_context import AppContext
 from ui.commands import handle_command
 
 
 def main():
+    notes_repository = create_notes_repo("notes.json")
+
     ctx = AppContext(
         ContactsService(ContactsRepository(ContactsStorage())),
-        NotesService(NotesRepository(NotesStorage()))
+        NotesService(notes_repository, notes_repository)
     )
 
     while True:
@@ -29,6 +30,9 @@ def main():
         except KeyboardInterrupt:
             handle_command("exit", ctx)
             break
+
+    notes_repository.flush()
+            
 
 
 if __name__ == "__main__":
