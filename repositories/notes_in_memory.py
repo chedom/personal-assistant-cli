@@ -1,6 +1,9 @@
 from typing import Optional, Iterable, Collection
 from models.note import Note, Tag
+from exceptions import NotFoundError
 from repositories.storage import Storage
+
+_sentinel = object()
 
 
 class NotesInMemoryRepository:
@@ -14,9 +17,15 @@ class NotesInMemoryRepository:
         """Add a note to the repository"""
         self.__notes[note.note_id] = note
 
-    def get(self, note_id: int) -> Optional[Note]:
+    def get(self, note_id: int, default=_sentinel) -> Optional[Note]:
         """Get a note from the repository"""
-        return self.__notes.get(note_id)
+        note = self.__notes.get(note_id)
+
+        if note is not None:
+            return note
+        if default is _sentinel:  # no default was provided
+            raise NotFoundError(f"Note: {note_id}")
+        return default
 
     def all(self) -> Iterable[Note]:
         return list(self.__notes.values())

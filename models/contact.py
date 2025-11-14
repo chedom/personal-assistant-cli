@@ -1,4 +1,5 @@
 from typing import Optional
+from exceptions import AlreadyExistError, NotFoundError
 from models.values import Name, Email, Phone, Address, Birthday
 import re
 
@@ -15,11 +16,24 @@ class Contact:
         self.email = email
 
     def add_phone(self, phone: Phone):
-        for phone_number in self.phones:
-            if phone_number == phone:
-                return
+        if self.__phone_exists(phone):
+            raise AlreadyExistError("Phone")
 
         self.phones.append(phone)
+
+    def edit_phone(self, prev_phone: Phone, new_phone: Phone):
+        if not self.__phone_exists(prev_phone):
+            raise NotFoundError(f"Phone {prev_phone}")
+        if self.__phone_exists(new_phone):
+            raise AlreadyExistError("Phone")
+
+        for i, p in enumerate(self.phones):
+            if p == prev_phone:
+                self.phones[i] = new_phone
+                break
+
+    def __phone_exists(self, phone: Phone) -> bool:
+        return any(p == phone for p in self.phones)
 
     def add_phones(self, phones: list[Phone]):
         for phone in phones:

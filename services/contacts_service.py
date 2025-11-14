@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Optional, Iterable
 from repositories.contacts import ContactsRepository
 from models import Contact
 from models.values import Email, Phone, Address, Birthday
@@ -19,36 +19,51 @@ class ContactsService:
         self.repo.save()
 
     def add_phone(self, name: str, phone: str) -> bool:
-        existing_contact = self.repo.get(name)
+        existing_contact = self.repo.get(name, default=None)
         if existing_contact:
             existing_contact.add_phone(Phone(phone))
             self.repo.save()
             return True
         return False
 
-    def set_email(self, name: str, email: str):
-        existing_contact = self.repo.get(name)
-        if not existing_contact:
-            raise KeyError(f"User with name {name} does not exist")
+    def set_email(self, name: str, raw_email: Optional[str]):
+        contact = self.repo.get(name)
+        email = None
 
-        existing_contact.set_email(Email(email))
+        if raw_email is not None:
+            email = Email(raw_email)
+
+        contact.set_email(email)
         self.repo.save()
 
-    def set_birthday(self, name: str, birthday: str):
-        existing_contact = self.repo.get(name)
-        if not existing_contact:
-            raise KeyError(f"User with name {name} does not exist")
+    def set_birthday(self, name: str, raw_birthday: Optional[str]):
+        contact = self.repo.get(name)
+        birthday = None
 
-        existing_contact.set_birthday(Birthday(birthday))
+        if raw_birthday is not None:
+            birthday = Birthday(raw_birthday)
+
+        contact.set_birthday(birthday)
         self.repo.save()
 
-    def set_address(self, name: str, address: str):
-        existing_contact = self.repo.get(name)
-        if not existing_contact:
-            raise KeyError(f"User with name {name} does not exist")
+    def set_address(self, name: str, raw_address: Optional[str]):
+        contact = self.repo.get(name)
+        address = None
+        if raw_address is not None:
+            address = Address(address)
 
-        existing_contact.set_address(Address(address))
+        contact.set_address(address)
         self.repo.save()
+
+    def edit_phone(self, name: str, prev_phone: str, new_phone: str) -> None:
+        contact = self.repo.get(name)
+        contact.edit_phone(Phone(prev_phone), Phone(new_phone))
+        self.repo.save()  # should it be ?
+
+    def delete_email(self, name: str, prev_phone: str, new_phone: str) -> None:
+        contact = self.repo.get(name)
+        contact.edit_phone(Phone(prev_phone), Phone(new_phone))
+        self.repo.save()  # should it be ?
 
     def find(self, search: str) -> Iterable[Contact]:
         return self.repo.find(search)

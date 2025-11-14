@@ -1,5 +1,8 @@
+from exceptions import NotFoundError
 from models.contact import Contact
 from typing import Iterable
+
+_sentinel = object()
 
 
 class ContactsRepository:
@@ -10,8 +13,14 @@ class ContactsRepository:
     def add(self, contact: Contact):
         self._contacts[contact.name.value] = contact
 
-    def get(self, name: str) -> Contact:
-        return self._contacts.get(name)
+    def get(self, name: str, default=_sentinel) -> Contact:
+        contact = self._contacts.get(name)
+
+        if contact is not None:
+            return contact
+        if default is _sentinel:  # no default was provided
+            raise NotFoundError(f"Contact: {name}")
+        return default
 
     def delete(self, name: str):
         self._contacts.pop(name)

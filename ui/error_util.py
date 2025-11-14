@@ -1,7 +1,14 @@
+from exceptions import AlreadyExistError, NotFoundError
+
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
+        except AlreadyExistError as e:
+            return e.message
+        except NotFoundError as e:
+            return e.message
         except KeyError as e:
             return f"Error: {e}"
         except ValueError as e:

@@ -52,6 +52,38 @@ def set_address(args, ctx: AppContext):
 
     ctx.contacts.set_address(args[0], args[1])
 
+def edit_phone(args, ctx: AppContext):
+    if len(args) < 3:
+        raise ValueError(
+            "edit command requires 3 arguments: username prev phone number and new phone"
+        )
+
+    username, prev_phone, new_phone = args
+    ctx.contacts.edit_phone(username, prev_phone, new_phone)
+
+def delete_email(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError(
+            "delete email command requires 1 arguments: username"
+        )
+
+    ctx.contacts.set_email(args[0], None)
+
+def delete_birthday(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError(
+            "delete birthday command requires 1 arguments: username"
+        )
+
+    ctx.contacts.set_birthday(args[0], None)
+
+def delete_address(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError(
+            "delete address command requires 1 arguments: username"
+        )
+
+    ctx.contacts.set_address(args[0], None)
 
 def find_contacts(args, ctx: AppContext):
     if not args:
@@ -195,10 +227,12 @@ def all_notes(args, ctx: AppContext):
 
 
 # flake8: noqa: E501
-def help_command(args, ctx: AppContext):
+def help_command(args, ctx: AppContext):          
     print("Available commands:\n"
+          # General commands
           "  hello                                     - Show greeting\n"
           "  help                                      - Show possible commands\n"
+          # Contact's commands
           "  add <username> <phone>                    - Add new contact with phone or add phone to existing contact\n"
           "  change <username> <old_phone> <new_phone> - Update contact's phone\n"
           "  phone <username>                          - Show contact's phone number(s)\n"
@@ -209,7 +243,20 @@ def help_command(args, ctx: AppContext):
           "  birthdays                                 - Show upcoming birthdays within next week\n"
           "  set-email <username> <email>              - Set email to contact\n"
           "  set-address <username> <address>          - Set address to contact\n"
-          "  add-note <note>                           - Add note\n"
+          "  delete-email <username>                   - Delete contact's email address\n"
+          "  delete-birthday <username>                - Delete contact's birthday address\n"
+          "  delete-address <username>                 - Delete contact's address address\n"
+          # Note's commands
+          "  add-note <note>                           - Add note, returns created note\n"
+          "  get-note <note-id>                        - Show title, body, tags of the note\n"
+          "  edit-note-title <note-id> <new-title>     - Change note's title\n"
+          "  edit-note-body <note-id> <new-body>       - Change note's body\n"
+          "  edit-note-tags <note-id> <tags>           - Change note's tags(comma separated list)\n"
+          "  find-notes <query>                        - Find notes that contain (title/body) specified string\n"
+          "  find-notes-tags <tags>                    - Find notes that have one of specifed tags\n"
+          "  sort-notes-tags <tags>                    - Sort notes by tags\n"
+          "  delete-note <note-id>                     - Delete note by note-id\n"
+
           "  close, exit                               - Exit the bot\n")
 
 
@@ -230,14 +277,18 @@ def parse_input(user_input: str) -> Tuple[str, List[str]]:
 
 commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "hello": lambda args, ctx: "How can I help you?",
-    # contact related cms
+    # Contact's commands
     "add": add_contact,
     "set-email": set_email,
     "set-birthday": set_birthday,
     "set-address": set_address,
+    "change": edit_phone,
+    "delete-email": delete_email,
+    "delete-birthday": delete_birthday,
+    "delete-address": delete_address,
     "find": find_contacts,
     "all": all_contacts,
-    # notes related cmd
+    # Note's commands
     "add-note": add_note,
     "note": get_note,
     "notes": all_notes,
