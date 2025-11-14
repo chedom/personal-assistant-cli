@@ -5,10 +5,17 @@ from pathlib import Path
 K = TypeVar("K")
 T = TypeVar("T")
 
+APP_DIR = '.personal-assistant-cli'
+HOME_DIR = str(Path.home() / APP_DIR)
+
 
 class FileStorage(Generic[K, T]):
-    def __init__(self, filepath: str, serializer: Serializer[K, T]):
-        self.__path: Path = Path(filepath)
+    def __init__(self, filepath: str, serializer: Serializer[K, T], use_home_dir=True):
+        if use_home_dir and filepath.startswith('/'):
+            raise ValueError("Absolute paths are not allowed when use_home_dir=True")
+        if use_home_dir:
+            Path(HOME_DIR).mkdir(parents=True, exist_ok=True)
+        self.__path: Path = (Path(HOME_DIR) / filepath) if use_home_dir else Path(filepath)
         self.__serializer: Serializer[T] = serializer
 
     def load(self) -> dict[K, T]:
