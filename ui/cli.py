@@ -2,7 +2,7 @@ import math
 from services.contacts_service import ContactsService
 
 from services import NotesService
-from ui.factory import create_notes_repo, create_contacts_repo
+from ui.factory import create_notes_repo, create_contacts_repo, SerializerType
 
 from core.app_context import AppContext
 from ui.commands import handle_command
@@ -28,8 +28,8 @@ def welcome_message():
 
 
 def main():
-    contacts_repository = create_contacts_repo("contacts.json")
-    notes_repository = create_notes_repo("notes.json")
+    contacts_repository = create_contacts_repo("contacts", SerializerType.PICKLE)
+    notes_repository = create_notes_repo("notes", SerializerType.PICKLE)
 
     ctx = AppContext(
         ContactsService(contacts_repository),

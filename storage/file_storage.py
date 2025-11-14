@@ -12,7 +12,8 @@ HOME_DIR = str(Path.home() / APP_DIR)
 
 
 class FileStorage(Generic[K, T]):
-    def __init__(self, filepath: str, serializer: Serializer[K, T], use_home_dir=True):
+    def __init__(self, filename: str, serializer: Serializer[K, T], use_home_dir=True):
+        filepath = f"{filename}.{ext}" if (ext := serializer.extension()) else filename
         if use_home_dir and filepath.startswith('/'):
             raise ValueError("Absolute paths are not allowed when use_home_dir=True")
         if use_home_dir:

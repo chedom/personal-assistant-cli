@@ -1,11 +1,12 @@
 from typing import Generic, TypeVar, Callable
 import json
+from storage.serializer import Serializer
 
 K = TypeVar("K")
 T = TypeVar("T")
 
 
-class JsonSerializer(Generic[K, T]):
+class JsonSerializer(Serializer[K, T], Generic[K, T]):
     def __init__(
         self,
         to_dict: Callable[[T], dict],
@@ -28,3 +29,6 @@ class JsonSerializer(Generic[K, T]):
             raise ValueError("JSON root must be an object")
 
         return {self.__from_key(k): self.__from_dict(v) for k, v in raw.items()}
+
+    def extension(self) -> str | None:
+        return 'json'
