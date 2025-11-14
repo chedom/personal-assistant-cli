@@ -27,7 +27,7 @@ class NotesService:
         """Add a note to the repository"""
         tags = self.__prepare_tags(req.tags)
         note_id = self.__id_gen.generate()
-        note = Note(req.title, req.body, tags, note_id=note_id)
+        note = Note(note_id, req.title, req.body, tags)
         self.__repo.add(note)
 
         return note
