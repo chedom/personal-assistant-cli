@@ -165,12 +165,12 @@ def get_contacts(args, ctx: AppContext):
 def upcomming_birthdays(args, ctx: AppContext):
     if not args:
         raise ValueError("Command requires number of days as argument")
-    
+
     try:
         num_days = int(args[0])
     except ValueError:
         raise ValueError("Number of days must be an integer")
-        
+
     contacts = ctx.contacts.upcomming_birthdays(num_days)
 
     if not contacts:
@@ -180,6 +180,13 @@ def upcomming_birthdays(args, ctx: AppContext):
     for contact, next_birthday in contacts:
         lines.append(f"{contact.name.value}: {next_birthday.strftime('%d.%m.%Y')}")
     return "\n".join(lines)
+
+
+def del_phone(args, ctx: AppContext):
+    if len(args) < 2:
+        raise ValueError("del-phone command requires 2 arguments: username and phone")
+
+    ctx.contacts.del_phone(args[0], args[1])
 
 
 # ---------- NOTE COMMANDS ----------
@@ -325,6 +332,7 @@ def help_command(args, ctx: AppContext):
           "  birthdays <number_of_days>                - Show upcoming birthdays in next [num] days\n"
           "  set-email <username> <email>              - Set email to contact\n"
           "  set-address <username> <address>          - Set address to contact\n"
+          "  delete-phone <username> <phone>              - Delete phone from contact\n"
           "  delete-email <username>                   - Delete contact's email address\n"
           "  delete-birthday <username>                - Delete contact's birthday address\n"
           "  delete-address <username>                 - Delete contact's address address\n"
@@ -368,6 +376,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "show-birthday": show_birthday,
     "set-address": set_address,
     "change": edit_phone,
+    "delete-phone": del_phone,
     "delete-email": delete_email,
     "delete-birthday": delete_birthday,
     "delete-address": delete_address,

@@ -83,6 +83,13 @@ class Contact:
         # Perform exact search
         return any(search_lower == val.casefold() for val in search_values)
 
+    def del_phone(self, phone: Phone):
+        for i, phone_number in enumerate(self.phones):
+            if phone_number == phone:
+                del self.phones[i]
+                return True
+        return False
+
     def __str__(self) -> str:
         phones_str = "| ".join(p.value for p in self.phones) or "—"
         parts = [f"Contact: {self.name.value}", f"phones: {phones_str}"]

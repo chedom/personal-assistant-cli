@@ -67,12 +67,24 @@ class ContactsService:
         contact.edit_phone(Phone(prev_phone), Phone(new_phone))
         self.repo.save(contact)
 
+    def del_phone(self, name: str, phone: str) -> bool:
+        existing_contact = self.repo.get(name)
+        if not existing_contact:
+            raise KeyError(f"User with name {name} does not exist")
+
+        phone_to_delete = Phone(phone)
+        if existing_contact.del_phone(phone_to_delete):
+            self.repo.save()
+            return True
+        else:
+            return False
+
     def find(self, search: str) -> Iterable[Contact]:
         return self.repo.find(search)
 
     def all(self) -> Iterable[Contact]:
         return self.repo.all()
-    
+
     def upcomming_birthdays(
             self, num_days: int) -> Iterable[tuple[Contact, date]]:
         contacts = self.all()
@@ -110,7 +122,7 @@ class ContactsService:
 
             if today <= next_birthday <= limit_day:
                 result.append((contact, next_birthday))
-        
+
         result.sort(key=lambda item: item[1])
 
         return result
