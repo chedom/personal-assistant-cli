@@ -8,15 +8,16 @@ class ContactsService:
     def __init__(self, repo: ContactsRepository):
         self.repo = repo
 
-    def add_contact(self, name: str, phone: str):
-        if self.add_phone(name, phone):
-            return
-
+    def add_contact(self, name: str, phone: str) -> Contact:
         new_contact = Contact(name)
         new_contact.add_phone(Phone(phone))
 
         self.repo.add(new_contact)
         self.repo.save()
+        return new_contact
+
+    def get(self, name: str) -> Contact | None:
+        return self.repo.get(name)
 
     def add_phone(self, name: str, phone: str) -> bool:
         existing_contact = self.repo.get(name, default=None)
@@ -50,7 +51,7 @@ class ContactsService:
         contact = self.repo.get(name)
         address = None
         if raw_address is not None:
-            address = Address(address)
+            address = Address(raw_address)
 
         contact.set_address(address)
         self.repo.save()

@@ -1,4 +1,4 @@
-from exceptions import NotFoundError
+from exceptions import NotFoundError, AlreadyExistError
 from models.contact import Contact
 from typing import Iterable
 
@@ -11,6 +11,9 @@ class ContactsRepository:
         self._contacts: dict[str, Contact] = self.storage.load() or {}
 
     def add(self, contact: Contact):
+        if self._contacts.get(contact.name.value) is not None:
+            raise AlreadyExistError(f"Contact {contact.name.value}")
+
         self._contacts[contact.name.value] = contact
 
     def get(self, name: str, default=_sentinel) -> Contact:

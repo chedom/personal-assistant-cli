@@ -35,7 +35,8 @@ class Note:
     def preview(self) -> str:
         return (
             f"{self.__note_id}, Title: {self.field_preview(self.__title)}\n"
-            f"{self.__updated_at:%Y-%m-%d} Body: {self.field_preview(self.__body)}\n"  # noqa
+            f"{self.__updated_at:%Y-%m-%d} Body: {self.field_preview(self.__body)}\n"
+            f"Tags: {','.join([v.value for v in self.__tags])}\n"
         )
 
     @property
