@@ -1,5 +1,6 @@
 from typing import Optional, Iterable
-from services.contacts_repo import ContactsRepository
+from exceptions import AlreadyExistError
+from repositories.contacts import ContactsRepository
 from models import Contact
 from models.values import Email, Phone, Address, Birthday
 
@@ -22,6 +23,14 @@ class ContactsService:
         contact = self.repo.get(name)
         contact.add_phone(Phone(phone))
         self.repo.save(contact)
+
+    def add_contact_or_phone(self, name: str, phone: str) -> str:
+        try:
+            self.add_contact(name, phone)
+            return 'contact'
+        except AlreadyExistError:
+            self.add_phone(name, phone)
+            return 'phone'
 
     def set_email(self, name: str, raw_email: Optional[str]):
         contact = self.repo.get(name)
