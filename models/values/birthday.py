@@ -7,7 +7,9 @@ class Birthday(Field):
     def __init__(self, value: str):
         normalized_value = Birthday.normalize(value)
         Birthday.validate(normalized_value)
-        super().__init__(datetime.strptime(normalized_value, "%d.%m.%Y").strftime("%d.%m.%Y"))
+        super().__init__(
+            datetime.strptime(normalized_value, "%d.%m.%Y").strftime("%d.%m.%Y")
+        )
 
     @staticmethod
     def normalize(value: str) -> str:
@@ -22,7 +24,6 @@ class Birthday(Field):
 
         if not re.fullmatch(r"\d{1,2}\.\d{1,2}\.\d{4}", value):
             raise ValueError("Birthday must be in format DD.MM.YYYY")
-        
         day_str, month_str, _ = value.split(".")
         day = int(day_str)
         month = int(month_str)

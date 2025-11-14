@@ -1,6 +1,8 @@
 from typing import TypeVar, Generic
 from storage.serializer import Serializer
 from pathlib import Path
+import os
+import tempfile
 
 K = TypeVar("K")
 T = TypeVar("T")
@@ -15,7 +17,9 @@ class FileStorage(Generic[K, T]):
             raise ValueError("Absolute paths are not allowed when use_home_dir=True")
         if use_home_dir:
             Path(HOME_DIR).mkdir(parents=True, exist_ok=True)
-        self.__path: Path = (Path(HOME_DIR) / filepath) if use_home_dir else Path(filepath)
+        self.__path: Path = (
+            (Path(HOME_DIR) / filepath) if use_home_dir else Path(filepath)
+        )
         self.__serializer: Serializer[T] = serializer
 
     def load(self) -> dict[K, T]:
@@ -25,8 +29,29 @@ class FileStorage(Generic[K, T]):
         data = self.__path.read_bytes()
         return self.__serializer.from_bytes(data)
 
-    # method is not safe, feel free to update
     def save(self, items: dict[K, T]) -> None:
         data = self.__serializer.to_bytes(items)
+
+        tmp_file = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="wb",
+                delete=False,
+                dir=str(self.__path.parent),
+                prefix=Path(self.__path.name).stem + "_", suffix=".tmp"
+            ) as tmp:
+                tmp_file = Path(tmp.name)
+                tmp.write(data)
+                tmp.flush()
+                os.fsync(tmp.fileno())
+            os.replace(tmp_file, self.__path)
+        except OSError as e:
+            if tmp_file and tmp_file.exists():
+                try:
+                    tmp_file.unlink()
+                except OSError:
+                    pass
+            raise e
+
         with open(self.__path, "wb") as f:
             f.write(data)
