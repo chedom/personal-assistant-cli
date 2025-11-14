@@ -1,4 +1,5 @@
 from models.contact import Contact
+from typing import Iterable
 
 
 class ContactsRepository:
@@ -15,10 +16,12 @@ class ContactsRepository:
     def delete(self, name: str):
         self._contacts.pop(name)
 
-    # TODO: Implement other methods that works with collection
+    def find(self, query: str) -> Iterable[Contact]:
+        """Search for contact by all fields"""
+        return [c for c in self._contacts.values() if c.is_matching(query)]
 
-    def all(self):
-        return self._contacts
+    def all(self) -> Iterable[Contact]:
+        return list(self._contacts.values())
 
     def save(self):
         self.storage.save(self._contacts)

@@ -1,5 +1,6 @@
 from typing import Optional
 from models.values import Name, Email, Phone, Address, Birthday
+import re
 
 
 class Contact:
@@ -29,6 +30,28 @@ class Contact:
 
     def set_address(self, address: Address):
         self.address = address
+
+    def is_matching(self, search: str) -> bool:
+        search_values = [self.name.value]
+        search_values.extend(str(phone) for phone in self.phones)
+
+        if self.email:
+            search_values.append(self.email.value)
+        if self.address:
+            search_values.append(self.address.value)
+        if self.birthday:
+            search_values.append(self.birthday.value)
+
+        search_lower = search.casefold()
+
+        # Perform regex search
+        if "*" in search:
+            regex_pattern = re.escape(search_lower).replace(r'\*', '.*')
+            regex_pattern = f"^{regex_pattern}$"
+            return any(re.match(regex_pattern, val.casefold()) is not None for val in search_values)
+
+        # Perform exact search
+        return any(search_lower == val.casefold() for val in search_values)
 
     def __str__(self) -> str:
         phones_str = "| ".join(p.value for p in self.phones) or "—"

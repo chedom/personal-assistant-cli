@@ -1,3 +1,4 @@
+import math
 from storage.contacts_storage import ContactsStorage
 from repositories.contacts import ContactsRepository
 from services.contacts_service import ContactsService
@@ -9,6 +10,15 @@ from core.app_context import AppContext
 from ui.commands import handle_command
 
 
+def welcome_message():
+    header_width = 110
+    divider = "-" * header_width
+    border_width = 1
+    message = 'WELCOME TO THE PERSONAL ASSISTANT TOOL!'
+    space = (header_width - len(message) - (border_width * 2)) / 2
+    print(divider, f"\n|{' ' * math.floor(space)}{message}{' ' * math.ceil(space)}|", f"\n{divider}")
+
+
 def main():
     notes_repository = create_notes_repo("notes.json")
 
@@ -16,6 +26,9 @@ def main():
         ContactsService(ContactsRepository(ContactsStorage())),
         NotesService(notes_repository, notes_repository)
     )
+
+    welcome_message()
+    handle_command('help', ctx)
 
     while True:
         try:
