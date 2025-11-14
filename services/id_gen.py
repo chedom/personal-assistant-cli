@@ -2,4 +2,5 @@ from typing import Protocol
 
 
 class IDGenerator(Protocol):
-    def generate(self) -> id: ...
+    """Generator for the id"""
+    def generate(self) -> int: ...

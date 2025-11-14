@@ -8,10 +8,10 @@ class Note:
 
     def __init__(
         self,
+        note_id: int,
         title: str,
         body: str = "",
         tags: set[Tag] | None = None,
-        note_id: int | None = None,
         created_at: DateTime | None = DateTime.now(),
         updated_at: DateTime | None = None,
     ):
@@ -33,25 +33,31 @@ class Note:
         )
 
     def preview(self) -> str:
+        """Get a preview of the note"""
         return (
             f"{self.__note_id}, Title: {self.field_preview(self.__title)}\n"
-            f"{self.__updated_at:%Y-%m-%d} Body: {self.field_preview(self.__body)}\n"  # noqa
+            f"{self.__updated_at:%Y-%m-%d} Body: {self.field_preview(self.__body)}\n"
+            f"Tags: {','.join([v.value for v in self.__tags])}\n"
         )
 
     @property
-    def note_id(self) -> int:
+    def note_id(self) -> str:
+        """Get the note id"""
         return self.__note_id
 
     @property
     def updated_at(self) -> DateTime:
+        """Get the updated at date"""
         return self.__updated_at
 
     def contains(self, substr: str) -> bool:
+        """Check if the note contains a substring"""
         substr = substr.strip().lower()
         return substr in self.__title.value.lower() \
             or substr in self.__body.value.lower()
 
     def count_matching_tags(self, tags: Collection[Tag]) -> int:
+        """Count the number of matching tags"""
         return len(self.__tags & set(tags))
 
     def edit_note(
@@ -60,6 +66,7 @@ class Note:
         new_body: str = None,
         new_tags: set[Tag] = None,
     ):
+        """Edit the note"""
         if new_title is not None:
             self.__title = Title(new_title.strip())
 
@@ -89,14 +96,15 @@ class Note:
         """Convert the dictionary to a note"""
         tags = {Tag(t) for t in data["tags"]}
         return cls(
+            note_id=data["note_id"],
             title=data["title"],
             body=data["body"],
             tags=tags,
-            note_id=data["note_id"],
             created_at=DateTime.fromisoformat(data["created_at"]),
             updated_at=DateTime.fromisoformat(data["updated_at"]),
         )
 
     @classmethod
     def field_preview(cls, field: Field) -> str:
+        """Get a preview of the field"""
         return field.value.split("\n", 1)[0][:cls.short_text_len]

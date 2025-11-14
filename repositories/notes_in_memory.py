@@ -1,12 +1,15 @@
 from typing import Optional, Iterable, Collection
 from models.note import Note, Tag
+from exceptions import NotFoundError
 from repositories.storage import Storage
+
+_sentinel = object()
 
 
 class NotesInMemoryRepository:
-    """Repository for the notes"""
-    def __init__(self, storage: Storage[Note]) -> None:
-        self.__storage: Storage[Note] = storage
+    """Inmemory repository for the notes"""
+    def __init__(self, storage: Storage[int, Note]) -> None:
+        self.__storage: Storage[int, Note] = storage
         self.__notes: dict[int, Note] = storage.load() or {}
         self.last_id = max(self.__notes, default=0)
 
@@ -14,11 +17,18 @@ class NotesInMemoryRepository:
         """Add a note to the repository"""
         self.__notes[note.note_id] = note
 
-    def get(self, note_id: int) -> Optional[Note]:
+    def get(self, note_id: int, default=_sentinel) -> Optional[Note]:
         """Get a note from the repository"""
-        return self.__notes.get(note_id)
+        note = self.__notes.get(note_id)
+
+        if note is not None:
+            return note
+        if default is _sentinel:  # no default was provided
+            raise NotFoundError(f"Note: {note_id}")
+        return default
 
     def all(self) -> Iterable[Note]:
+        """Get all notes from the repository"""
         return list(self.__notes.values())
 
     def find(self, query: str) -> Iterable[Note]:
@@ -36,15 +46,20 @@ class NotesInMemoryRepository:
         """Delete a note from the repository"""
         self.__notes.pop(note_id, None)
 
-    def save(self) -> None:
+    def save(self, note: Note) -> None:
         """Update a note in the repository"""
         # is not relevant for inmemory storage,
         # relevant for DBMS (Mongo, Postgresql, etc) adapter
         ...
 
-    def generate(self) -> int:
+    def generate(self) -> str:
+        """
+        Generate a new note id. In this case we use  counter, but in real cases
+        it could be value returned from DB.
+        """
         self.last_id += 1
         return self.last_id
 
     def flush(self) -> None:
+        """Flush the repository to the storage"""
         self.__storage.save(self.__notes)
