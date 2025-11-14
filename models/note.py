@@ -8,10 +8,10 @@ class Note:
 
     def __init__(
         self,
+        note_id: int,
         title: str,
         body: str = "",
         tags: set[Tag] | None = None,
-        note_id: int | None = None,
         created_at: DateTime | None = DateTime.now(),
         updated_at: DateTime | None = None,
     ):
@@ -41,7 +41,7 @@ class Note:
         )
 
     @property
-    def note_id(self) -> int:
+    def note_id(self) -> str:
         """Get the note id"""
         return self.__note_id
 
@@ -96,10 +96,10 @@ class Note:
         """Convert the dictionary to a note"""
         tags = {Tag(t) for t in data["tags"]}
         return cls(
+            note_id=data["note_id"],
             title=data["title"],
             body=data["body"],
             tags=tags,
-            note_id=data["note_id"],
             created_at=DateTime.fromisoformat(data["created_at"]),
             updated_at=DateTime.fromisoformat(data["updated_at"]),
         )

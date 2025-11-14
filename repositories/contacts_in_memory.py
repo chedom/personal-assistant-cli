@@ -8,8 +8,8 @@ _sentinel = object()
 
 class ContactsInMemoryRepository:
     """Inmemory repository for the contacts"""
-    def __init__(self, storage: Storage[Contact]) -> None:
-        self.__storage: Storage[Contact] = storage
+    def __init__(self, storage: Storage[str, Contact]) -> None:
+        self.__storage: Storage[str, Contact] = storage
         self.__contacts: dict[str, Contact] = storage.load() or {}
 
     def add(self, contact: Contact) -> None:

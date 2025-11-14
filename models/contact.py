@@ -110,7 +110,7 @@ class Contact:
     def from_dict(cls, data: dict) -> Self:
         """Convert the dictionary to a contact"""
         return cls(
-            name=Name(data["name"]),
+            name=data["name"],
             email=Email(data["email"]) if data["email"] else None,
             phones=[Phone(p) for p in data["phones"]],
             birthday=Birthday(data["birthday"]) if data["birthday"] else None,

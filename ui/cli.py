@@ -1,10 +1,8 @@
 import math
-from storage.contacts_storage import ContactsStorage
-from repositories.contacts import ContactsRepository
 from services.contacts_service import ContactsService
 
 from services import NotesService
-from ui.factory import create_notes_repo
+from ui.factory import create_notes_repo, create_contacts_repo
 
 from core.app_context import AppContext
 from ui.commands import handle_command
@@ -30,10 +28,11 @@ def welcome_message():
 
 
 def main():
+    contacts_repository = create_contacts_repo("contacts.json")
     notes_repository = create_notes_repo("notes.json")
 
     ctx = AppContext(
-        ContactsService(ContactsRepository(ContactsStorage())),
+        ContactsService(contacts_repository),
         NotesService(notes_repository, notes_repository)
     )
 
@@ -55,6 +54,7 @@ def main():
             break
 
     notes_repository.flush()
+    contacts_repository.flush()
 
 
 if __name__ == "__main__":

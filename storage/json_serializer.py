@@ -1,25 +1,30 @@
 from typing import Generic, TypeVar, Callable
 import json
 
+K = TypeVar("K")
 T = TypeVar("T")
 
 
-class JsonSerializer(Generic[T]):
+class JsonSerializer(Generic[K, T]):
     def __init__(
         self,
         to_dict: Callable[[T], dict],
-        from_dict: Callable[dict, [T]],
+        from_dict: Callable[[dict], T],
+        to_key: Callable[[K], str] = lambda k: k,
+        from_key: Callable[[str], K] = lambda k: k,
     ):
-        self.__to_dict = to_dict
-        self.__from_dict = from_dict
+        self.__to_key: Callable[[K], str] = to_key
+        self.__from_key: Callable[[str], K] = from_key
+        self.__to_dict: Callable[[T], dict] = to_dict
+        self.__from_dict: Callable[[dict], T] = from_dict
 
-    def to_bytes(self, items: dict[int, T]) -> bytes:
-        payload = {k: self.__to_dict(v) for k, v in items.items()}
+    def to_bytes(self, items: dict[K, T]) -> bytes:
+        payload = {self.__to_key(k): self.__to_dict(v) for k, v in items.items()}
         return json.dumps(payload, ensure_ascii=False).encode("utf-8")
 
-    def from_bytes(self, data: bytes) -> dict[int, T]:
+    def from_bytes(self, data: bytes) -> dict[K, T]:
         raw = json.loads(data.decode("utf-8"))
         if not isinstance(raw, dict):
             raise ValueError("JSON root must be an object")
 
-        return {int(k): self.__from_dict(v) for k, v in raw.items()}
+        return {self.__from_key(k): self.__from_dict(v) for k, v in raw.items()}

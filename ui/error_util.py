@@ -15,7 +15,7 @@ def input_error(func):
             return f"Error: {e}"
         except IndexError as e:
             return f"Error: {e}"
-        except Exception as e:
-            return f"An error occurred: {type(e).__name__}: {e}"
+        # except Exception as e:
+        #     return f"An error occurred: {type(e).__name__}: {e}"
 
     return inner
