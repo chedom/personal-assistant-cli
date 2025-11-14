@@ -25,12 +25,12 @@ def add_contact(args, ctx: AppContext):
         raise ValueError("add command requires 2 arguments: username and phone")
 
     name, phone = args
-    try:
-        contact = ctx.contacts.add_contact(name, phone)
-        return f"Contact {str(contact.name)} was added to the book."
-    except AlreadyExistError:
-        ctx.contacts.add_phone(name, phone)
-        return f"Phone was added to the contact {name}."
+
+    res = ctx.contacts.add_contact_or_phone(name, phone)
+    return {
+        "contact": f"Contact {name} was added to the book.",
+        "phone": f"Phone was added to the contact {name}."
+    }.get(res, '')
 
 
 def set_email(args, ctx: AppContext):
