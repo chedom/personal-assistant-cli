@@ -79,6 +79,14 @@ class ContactsService:
         else:
             return False
 
+    def del_contact(self, name: str):
+        existing_contact = self.repo.get(name)
+        if not existing_contact:
+            raise KeyError(f"User with name {name} does not exist")
+
+        self.repo.delete(name)
+        self.repo.save()
+
     def find(self, search: str) -> Iterable[Contact]:
         return self.repo.find(search)
 

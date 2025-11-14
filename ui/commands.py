@@ -189,6 +189,14 @@ def del_phone(args, ctx: AppContext):
     ctx.contacts.del_phone(args[0], args[1])
 
 
+def del_contact(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError("del-contact command requires 1 argument: username")
+
+    ctx.contacts.del_contact(args[0])
+    return f"Contact {args[0]} deleted successfully"
+
+
 # ---------- NOTE COMMANDS ----------
 def _get_note_id(note_id: str):
     try:
@@ -336,6 +344,7 @@ def help_command(args, ctx: AppContext):
           "  delete-email <username>                   - Delete contact's email address\n"
           "  delete-birthday <username>                - Delete contact's birthday address\n"
           "  delete-address <username>                 - Delete contact's address address\n"
+          "  delete-contact <username>                    - Delete contact\n"
           "\n\n# Note's commands\n"
           "  add-note <note>                           - Add note, returns created note\n"
           "  note <note-id>                            - Show title, body, tags of the note\n"
@@ -383,6 +392,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "find": find_contacts,
     "all": all_contacts,
     "birthdays": upcomming_birthdays,
+    "delete-contact": del_contact,
 
     # Note's commands
     "add-note": add_note,
