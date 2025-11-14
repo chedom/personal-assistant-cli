@@ -20,10 +20,22 @@ class Birthday(Field):
         if not value:
             raise ValueError("Birthday should not be empty")
 
+        if not re.fullmatch(r"\d{2}\.\d{2}\.\d{4}", value):
+            raise ValueError("Birthday must be in format DD.MM.YYYY")
+        
+        day_str, month_str = value.split(".")
+        day = int(day_str)
+        month = int(month_str)
+
+        if not 1 <= day <= 31:
+            raise ValueError("Day must be between 01 and 31")
+        if not 1 <= month <= 12:
+            raise ValueError("Month must be between 01 and 12")
+
         try:
             birthday = datetime.strptime(value, "%d.%m.%Y").date()
         except ValueError:
-            raise ValueError("Birthday must be in format DD.MM.YYYY")
+            raise ValueError("Invalid calendar date")
 
         today = date.today()
 
