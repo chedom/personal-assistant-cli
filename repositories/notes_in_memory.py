@@ -7,9 +7,9 @@ _sentinel = object()
 
 
 class NotesInMemoryRepository:
-    """Repository for the notes"""
-    def __init__(self, storage: Storage[Note]) -> None:
-        self.__storage: Storage[Note] = storage
+    """Inmemory repository for the notes"""
+    def __init__(self, storage: Storage[int, Note]) -> None:
+        self.__storage: Storage[int, Note] = storage
         self.__notes: dict[int, Note] = storage.load() or {}
         self.last_id = max(self.__notes, default=0)
 
@@ -28,6 +28,7 @@ class NotesInMemoryRepository:
         return default
 
     def all(self) -> Iterable[Note]:
+        """Get all notes from the repository"""
         return list(self.__notes.values())
 
     def find(self, query: str) -> Iterable[Note]:
@@ -51,9 +52,14 @@ class NotesInMemoryRepository:
         # relevant for DBMS (Mongo, Postgresql, etc) adapter
         ...
 
-    def generate(self) -> int:
+    def generate(self) -> str:
+        """
+        Generate a new note id. In this case we use  counter, but in real cases
+        it could be value returned from DB.
+        """
         self.last_id += 1
         return self.last_id
 
     def flush(self) -> None:
+        """Flush the repository to the storage"""
         self.__storage.save(self.__notes)

@@ -1,27 +1,36 @@
-from typing import Optional
+import re
+from typing import Optional, Self
 from exceptions import AlreadyExistError, NotFoundError
 from models.values import Name, Email, Phone, Address, Birthday
-import re
 
 
 class Contact:
-    def __init__(self, name: str):
-        self.name = Name(name)
-        self.email: Optional[Email] = None
-        self.phones: list[Phone] = []
-        self.birthday: Optional[Birthday] = None
-        self.address: Optional[Address] = None
+    def __init__(
+        self, name: str,
+        email: Optional[Email] = None,
+        phones: list[Phone] = None,
+        birthday: Optional[Birthday] = None,
+        address: Optional[Address] = None,
+    ):
+        self.name: Name = Name(name)
+        self.email: Optional[Email] = email
+        self.phones: list[Phone] = phones or []
+        self.birthday: Optional[Birthday] = birthday
+        self.address: Optional[Address] = address
 
     def set_email(self, email: Email):
+        """Set the email"""
         self.email = email
 
     def add_phone(self, phone: Phone):
+        """Add a phone"""
         if self.__phone_exists(phone):
             raise AlreadyExistError("Phone")
 
         self.phones.append(phone)
 
     def edit_phone(self, prev_phone: Phone, new_phone: Phone):
+        """Edit a phone"""
         if not self.__phone_exists(prev_phone):
             raise NotFoundError(f"Phone {prev_phone}")
         if self.__phone_exists(new_phone):
@@ -36,16 +45,20 @@ class Contact:
         return any(p == phone for p in self.phones)
 
     def add_phones(self, phones: list[Phone]):
+        """Add multiple phones"""
         for phone in phones:
             self.add_phone(phone)
 
     def set_birthday(self, birthday: Birthday):
+        """Set the birthday"""
         self.birthday = birthday
 
     def set_address(self, address: Address):
+        """Set the address"""
         self.address = address
 
     def is_matching(self, search: str) -> bool:
+        """Check if the contact matches the search"""
         search_values = [self.name.value]
         search_values.extend(str(phone) for phone in self.phones)
 
@@ -82,3 +95,24 @@ class Contact:
             parts.append(f"address: {self.address}")
 
         return ", ".join(parts)
+
+    def to_dict(self) -> dict:
+        """Convert the contact to a dictionary"""
+        return {
+            "name": self.name.value,
+            "email": self.email.value if self.email else None,
+            "phones": [p.value for p in self.phones],
+            "birthday": self.birthday.value if self.birthday else None,
+            "address": self.address.value if self.address else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """Convert the dictionary to a contact"""
+        return cls(
+            name=data["name"],
+            email=Email(data["email"]) if data["email"] else None,
+            phones=[Phone(p) for p in data["phones"]],
+            birthday=Birthday(data["birthday"]) if data["birthday"] else None,
+            address=Address(data["address"]) if data["address"] else None,
+        )

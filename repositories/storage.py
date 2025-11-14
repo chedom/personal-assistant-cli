@@ -1,9 +1,9 @@
 from typing import Protocol, TypeVar
 
-
+K = TypeVar("K")
 T = TypeVar("T")
 
 
-class Storage(Protocol[T]):
-    def load(self) -> dict[int, T]: ...
-    def save(self, notes: dict[int, T]) -> None: ...
+class Storage(Protocol[K, T]):
+    def load(self) -> dict[K, T]: ...
+    def save(self, notes: dict[K, T]) -> None: ...

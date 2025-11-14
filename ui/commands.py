@@ -153,6 +153,14 @@ def all_contacts(args, ctx: AppContext):
         lines.append(str(contact))
     return "\n".join(lines)
 
+def get_contacts(args, ctx: AppContext):
+    if len(args) < 1:
+        raise ValueError(
+            "get contact command requires 1 arguments: username"
+        )
+
+    username = args[0]
+    return str(ctx.contacts.get(username))
 
 def upcomming_birthdays(args, ctx: AppContext):
     if not args:
@@ -354,6 +362,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
 
     # Contact's commands
     "add": add_contact,
+    "phone": get_contacts,
     "set-email": set_email,
     "set-birthday": set_birthday,
     "show-birthday": show_birthday,

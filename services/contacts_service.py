@@ -1,5 +1,4 @@
 from typing import Optional, Iterable
-
 from exceptions import AlreadyExistError
 from repositories.contacts import ContactsRepository
 from models import Contact
@@ -16,19 +15,15 @@ class ContactsService:
         new_contact.add_phone(Phone(phone))
 
         self.repo.add(new_contact)
-        self.repo.save()
         return new_contact
 
     def get(self, name: str) -> Contact | None:
         return self.repo.get(name)
 
     def add_phone(self, name: str, phone: str) -> bool:
-        existing_contact = self.repo.get(name, default=None)
-        if existing_contact:
-            existing_contact.add_phone(Phone(phone))
-            self.repo.save()
-            return True
-        return False
+        contact = self.repo.get(name)
+        contact.add_phone(Phone(phone))
+        self.repo.save(contact)
 
     def add_contact_or_phone(self, name: str, phone: str) -> str:
         try:
@@ -46,7 +41,7 @@ class ContactsService:
             email = Email(raw_email)
 
         contact.set_email(email)
-        self.repo.save()
+        self.repo.save(contact)
 
     def set_birthday(self, name: str, raw_birthday: Optional[str]):
         contact = self.repo.get(name)
@@ -56,7 +51,7 @@ class ContactsService:
             birthday = Birthday(raw_birthday)
 
         contact.set_birthday(birthday)
-        self.repo.save()
+        self.repo.save(contact)
 
     def set_address(self, name: str, raw_address: Optional[str]):
         contact = self.repo.get(name)
@@ -65,12 +60,12 @@ class ContactsService:
             address = Address(raw_address)
 
         contact.set_address(address)
-        self.repo.save()
+        self.repo.save(contact)
 
     def edit_phone(self, name: str, prev_phone: str, new_phone: str) -> None:
         contact = self.repo.get(name)
         contact.edit_phone(Phone(prev_phone), Phone(new_phone))
-        self.repo.save()  # should it be ?
+        self.repo.save(contact)
 
     def find(self, search: str) -> Iterable[Contact]:
         return self.repo.find(search)

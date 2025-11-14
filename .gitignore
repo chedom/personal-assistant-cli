@@ -1,6 +1,6 @@
 # Files with saved application state
 notes.json
-contact.json
+contacts.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
