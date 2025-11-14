@@ -154,6 +154,26 @@ def all_contacts(args, ctx: AppContext):
     return "\n".join(lines)
 
 
+def all_contacts_in_n_days(args, ctx: AppContext):
+    if not args:
+        raise ValueError("Command requires number of days as argument")
+    
+    try:
+        num_days = int(args[0])
+    except ValueError:
+        raise ValueError("Number of days must be an integer")
+        
+    contacts = ctx.contacts.all_in_N_days(num_days)
+
+    if not contacts:
+        return f"No contacts found in the book for nearest [{num_days}] days"
+
+    lines = [f"All contacts for nearest [{num_days}] days:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
+
+
 # ---------- NOTE COMMANDS ----------
 def _get_note_id(note_id: str):
     try:
@@ -291,6 +311,7 @@ def help_command(args, ctx: AppContext):
           "  change <username> <old_phone> <new_phone> - Update contact's phone\n"
           "  phone <username>                          - Show contact's phone number(s)\n"
           "  all                                       - Show all contacts\n"
+          "  all_in_n_days <numbed_of_days>            - Show all contacts in N days\n"
           "  find <search_text>                        - Find matching contacts; use * symbol to skip exact matching\n"
           "  set-birthday <username> <DD.MM.YYYY>      - Set birthday to contact\n"
           "  show-birthday <username>                  - Show contact's birthday\n"
@@ -344,6 +365,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "delete-address": delete_address,
     "find": find_contacts,
     "all": all_contacts,
+    "all_in_n_days": all_contacts_in_n_days,
 
     # Note's commands
     "add-note": add_note,

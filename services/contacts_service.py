@@ -2,6 +2,7 @@ from typing import Optional, Iterable
 from repositories.contacts import ContactsRepository
 from models import Contact
 from models.values import Email, Phone, Address, Birthday
+from datetime import datetime, date, timedelta
 
 
 class ContactsService:
@@ -66,5 +67,44 @@ class ContactsService:
 
     def all(self) -> Iterable[Contact]:
         return self.repo.all()
+    
+    def all_in_N_days(self, num_days: int) -> Iterable[Contact]:
+        contacts = self.all()
+        today = date.today()
+        limit_day = today + timedelta(days=num_days)
+
+        result = []
+
+        for contact in contacts:
+            if contact.birthday is None:
+                continue
+
+            try:
+                bday = datetime.strptime(
+                    contact.birthday.value, "%d.%m.%Y").date()
+            except ValueError:
+                continue
+
+            # Find nearest birthday
+            try:
+                birthday_this_year = date(today.year, bday.month, bday.day)
+            except ValueError:  # 29 Feb in short year
+                # 28 Feb for short year
+                birthday_this_year = date(today.year, bday.month, bday.day - 1)
+
+            if birthday_this_year < today:
+                try:
+                    next_birthday = date(today.year + 1, bday.month, bday.day)
+                except ValueError:  # 29 Feb in short year
+                    # 28 Feb for short year
+                    next_birthday = date(
+                        today.year + 1, bday.month, bday.day - 1)
+            else:
+                next_birthday = birthday_this_year
+
+            if today <= next_birthday <= limit_day:
+                result.append(contact)
+        
+        return result
 
     # TODO: implement other methods to deal with contacts service
