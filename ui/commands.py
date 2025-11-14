@@ -185,16 +185,19 @@ def upcoming_birthdays(args, ctx: AppContext):
     return "\n".join(lines)
 
 
-def del_phone(args, ctx: AppContext):
+def delete_phone(args, ctx: AppContext):
     if len(args) < 2:
-        raise ValueError("del-phone command requires 2 arguments: username and phone")
+        raise ValueError("delete-phone command requires 2 arguments: username and phone")
 
-    ctx.contacts.del_phone(args[0], args[1])
+    name = args[0]
+    phone = " ".join(args[1:])
+    ctx.contacts.del_phone(name, phone)
+    return f"Phone was removed from {name}."
 
 
-def del_contact(args, ctx: AppContext):
+def delete_contact(args, ctx: AppContext):
     if len(args) < 1:
-        raise ValueError("del-contact command requires 1 argument: username")
+        raise ValueError("delete-contact command requires 1 argument: username")
 
     ctx.contacts.del_contact(args[0])
     return f"Contact {args[0]} deleted successfully"
@@ -343,11 +346,11 @@ def help_command(args, ctx: AppContext):
           "  birthdays <number_of_days>                - Show upcoming birthdays in next [num] days\n"
           "  set-email <username> <email>              - Set email to contact\n"
           "  set-address <username> <address>          - Set address to contact\n"
-          "  delete-phone <username> <phone>              - Delete phone from contact\n"
+          "  delete-phone <username> <phone>           - Delete phone from contact\n"
           "  delete-email <username>                   - Delete contact's email address\n"
           "  delete-birthday <username>                - Delete contact's birthday address\n"
           "  delete-address <username>                 - Delete contact's address address\n"
-          "  delete-contact <username>                    - Delete contact\n"
+          "  delete-contact <username>                 - Delete contact\n"
           "\n\n# Note's commands\n"
           "  add-note <note>                           - Add note, returns created note\n"
           "  note <note-id>                            - Show title, body, tags of the note\n"
@@ -388,14 +391,14 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
     "show-birthday": show_birthday,
     "set-address": set_address,
     "change": edit_phone,
-    "delete-phone": del_phone,
+    "delete-phone": delete_phone,
     "delete-email": delete_email,
     "delete-birthday": delete_birthday,
     "delete-address": delete_address,
     "find": find_contacts,
     "all": all_contacts,
     "birthdays": upcoming_birthdays,
-    "delete-contact": del_contact,
+    "delete-contact": delete_contact,
 
     # Note's commands
     "add-note": add_note,
