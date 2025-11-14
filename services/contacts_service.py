@@ -91,7 +91,7 @@ class ContactsService:
     def all(self) -> Iterable[Contact]:
         return self.repo.all()
 
-    def upcomming_birthdays(
+    def upcoming_birthdays(
             self, num_days: int) -> Iterable[tuple[Contact, date]]:
         contacts = self.all()
         today = date.today()
