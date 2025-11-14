@@ -6,12 +6,12 @@ class Name(Field):
         normalized_value = Name.normalize(value)
         Name.validate(normalized_value)
         super().__init__(normalized_value)
-    
+
     @staticmethod
     def normalize(value: str) -> str:
         value = value.strip()
         return value.capitalize()
-    
+
     @staticmethod
     def validate(value: str):
         if not value:

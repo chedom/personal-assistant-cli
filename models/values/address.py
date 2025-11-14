@@ -26,7 +26,7 @@ class Address(Field):
 
         if len(value) < 5:
             raise ValueError("Address is too short")
-        
+
         if len(value) > 200:
             raise ValueError("Address is too long")
 
