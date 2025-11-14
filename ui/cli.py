@@ -9,6 +9,12 @@ from ui.factory import create_notes_repo
 from core.app_context import AppContext
 from ui.commands import handle_command
 
+try:
+    # Support arrows, command history on unix systems
+    import readline  # noqa: F401
+except ImportError:
+    pass
+
 
 def welcome_message():
     header_width = 110
@@ -16,7 +22,11 @@ def welcome_message():
     border_width = 1
     message = 'WELCOME TO THE PERSONAL ASSISTANT TOOL!'
     space = (header_width - len(message) - (border_width * 2)) / 2
-    print(divider, f"\n|{' ' * math.floor(space)}{message}{' ' * math.ceil(space)}|", f"\n{divider}")
+    print(
+        divider,
+        f"\n|{' ' * math.floor(space)}{message}{' ' * math.ceil(space)}|",
+        f"\n{divider}"
+    )
 
 
 def main():

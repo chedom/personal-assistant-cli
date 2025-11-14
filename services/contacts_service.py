@@ -8,15 +8,16 @@ class ContactsService:
     def __init__(self, repo: ContactsRepository):
         self.repo = repo
 
-    def add_contact(self, name: str, phone: str):
-        if self.add_phone(name, phone):
-            return
-
+    def add_contact(self, name: str, phone: str) -> Contact:
         new_contact = Contact(name)
         new_contact.add_phone(Phone(phone))
 
         self.repo.add(new_contact)
         self.repo.save()
+        return new_contact
+
+    def get(self, name: str) -> Contact | None:
+        return self.repo.get(name)
 
     def add_phone(self, name: str, phone: str) -> bool:
         existing_contact = self.repo.get(name, default=None)
@@ -56,11 +57,6 @@ class ContactsService:
         self.repo.save()
 
     def edit_phone(self, name: str, prev_phone: str, new_phone: str) -> None:
-        contact = self.repo.get(name)
-        contact.edit_phone(Phone(prev_phone), Phone(new_phone))
-        self.repo.save()  # should it be ?
-
-    def delete_email(self, name: str, prev_phone: str, new_phone: str) -> None:
         contact = self.repo.get(name)
         contact.edit_phone(Phone(prev_phone), Phone(new_phone))
         self.repo.save()  # should it be ?

@@ -62,7 +62,10 @@ class Contact:
         if "*" in search:
             regex_pattern = re.escape(search_lower).replace(r'\*', '.*')
             regex_pattern = f"^{regex_pattern}$"
-            return any(re.match(regex_pattern, val.casefold()) is not None for val in search_values)
+            return any(
+                re.match(regex_pattern, val.casefold()) is not None
+                for val in search_values
+            )
 
         # Perform exact search
         return any(search_lower == val.casefold() for val in search_values)

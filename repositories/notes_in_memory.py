@@ -45,7 +45,7 @@ class NotesInMemoryRepository:
         """Delete a note from the repository"""
         self.__notes.pop(note_id, None)
 
-    def save(self) -> None:
+    def save(self, note: Note) -> None:
         """Update a note in the repository"""
         # is not relevant for inmemory storage,
         # relevant for DBMS (Mongo, Postgresql, etc) adapter
