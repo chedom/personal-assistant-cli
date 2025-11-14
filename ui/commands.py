@@ -1,7 +1,6 @@
 import shlex
 from typing import Dict, List, Tuple, Callable
 from core.app_context import AppContext
-from exceptions import AlreadyExistError
 
 from ui.error_util import input_error
 
@@ -24,7 +23,8 @@ def add_contact(args, ctx: AppContext):
     if len(args) < 2:
         raise ValueError("add command requires 2 arguments: username and phone")
 
-    name, phone = args
+    name = args[0]
+    phone = " ".join(args[1:])
 
     res = ctx.contacts.add_contact_or_phone(name, phone)
     return {
@@ -39,7 +39,7 @@ def set_email(args, ctx: AppContext):
             "set-email command requires 2 arguments: username and email"
         )
 
-    name, email = args
+    name, email, *_ = args
     ctx.contacts.set_email(name, email)
     return "Email was set for the contact."
 
@@ -50,7 +50,7 @@ def set_birthday(args, ctx: AppContext):
             "set-birthday command requires 2 arguments: username and birthday"
         )
 
-    name, birthday = args
+    name, birthday, *_ = args
     ctx.contacts.set_birthday(name, birthday)
     return "Birthday has been set for the contact."
 
@@ -87,7 +87,7 @@ def edit_phone(args, ctx: AppContext):
             "edit command requires 3 arguments: username prev phone number and new phone"
         )
 
-    username, prev_phone, new_phone = args
+    username, prev_phone, new_phone, *_ = args
     ctx.contacts.edit_phone(username, prev_phone, new_phone)
     return "Contact’s phone was successfully changed."
 
@@ -153,6 +153,7 @@ def all_contacts(args, ctx: AppContext):
         lines.append(str(contact))
     return "\n".join(lines)
 
+
 def get_contacts(args, ctx: AppContext):
     if len(args) < 1:
         raise ValueError(
@@ -161,6 +162,7 @@ def get_contacts(args, ctx: AppContext):
 
     username = args[0]
     return str(ctx.contacts.get(username))
+
 
 def upcomming_birthdays(args, ctx: AppContext):
     if not args:
@@ -209,7 +211,7 @@ def add_note(args, ctx: AppContext):
     if len(args) < 3:
         raise ValueError("add note command requires 3 argument: title body tags")
 
-    title, body, tags = args
+    title, body, tags, *_ = args
     req = CreateNoteReq(
         title=title,
         body=body.replace(r"\n", "\n"),  # allow new line symbol
