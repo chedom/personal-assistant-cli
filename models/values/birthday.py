@@ -7,7 +7,7 @@ class Birthday(Field):
     def __init__(self, value: str):
         normalized_value = Birthday.normalize(value)
         Birthday.validate(normalized_value)
-        super().__init__(normalized_value)
+        super().__init__(datetime.strptime(normalized_value, "%d.%m.%Y").strftime("%d.%m.%Y"))
 
     @staticmethod
     def normalize(value: str) -> str:
