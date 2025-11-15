@@ -132,4 +132,7 @@ class Note:
     @classmethod
     def field_preview(cls, field: Field) -> str:
         """Get a preview of the field"""
-        return field.value.split("\n", 1)[0][:cls.short_text_len]
+        preview = field.value.split("\n", 1)[0]
+        if len(preview) > cls.short_text_len:
+            return preview[:cls.short_text_len] + "..."
+        return preview

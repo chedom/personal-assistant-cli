@@ -71,7 +71,7 @@ class Out:
         ) or "—"
         parts = [
             f"{Out.SECTION}Contact:{Out.RESET} "
-            f"{Out.INFO}{contact.name.value}{Out.RESET}"
+            f"{Out.INFO}{contact.name.value}{Out.RESET}",
             f"{Out.PARAM} > Phones: {Out.INFO}{phones_str}{Out.RESET}"
         ]
 
