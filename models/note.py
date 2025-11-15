@@ -35,6 +35,7 @@ class Note:
             f"  {Out.PARAM}Updated at: {Out.INFO}{self.__updated_at:%d.%m.%Y}"
         )
 
+    # flake8: noqa: E501 Line too long
     def preview(self) -> str:
         """Get a preview of the note"""
         tags_str = ",".join([v.value for v in self.__tags]) if self.__tags else "—"
@@ -53,6 +54,26 @@ class Note:
     def updated_at(self) -> DateTime:
         """Get the updated at date"""
         return self.__updated_at
+
+    @property
+    def created_at(self) -> DateTime:
+        """Get the created at date"""
+        return self.__created_at
+
+    @property
+    def tags(self) -> set[Tag]:
+        """Get the tags"""
+        return self.__tags
+
+    @property
+    def title(self) -> Title:
+        """Get the title"""
+        return self.__title
+
+    @property
+    def body(self) -> Field:
+        """Get the body"""
+        return self.__body
 
     def contains(self, substr: str) -> bool:
         """Check if the note contains a substring"""
@@ -86,10 +107,14 @@ class Note:
 
     def to_dict(self) -> dict:
         """Convert the note to a dictionary"""
+        # Sort tags to make it stable
+        tags = [v.value for v in self.__tags]
+        tags.sort()
+
         return {
             "title": self.__title.value,
             "body": self.__body.value,
-            "tags": [v.value for v in self.__tags],
+            "tags": tags,
             "note_id": self.__note_id,
             "created_at": self.__created_at.isoformat(),
             "updated_at": self.__updated_at.isoformat(),
