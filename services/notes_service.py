@@ -83,7 +83,8 @@ class NotesService:
         return self.__repo.all()
 
     def delete_note(self, req: DeleteReq) -> None:
-        self.__repo.delete(req.note_id)
+        note = self.__repo.get(req.note_id)
+        self.__repo.delete(note.note_id)
 
     def __prepare_tags(self, tags: list[str]) -> set[Tag]:
         return {Tag(t) for t in tags}
