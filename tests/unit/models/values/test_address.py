@@ -52,4 +52,3 @@ class TestAddress(unittest.TestCase):
                 with self.assertRaises(expected_exception) as context:
                     Address(input_value)
                 self.assertEqual(str(context.exception), expected_message)
-

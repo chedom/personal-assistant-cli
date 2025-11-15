@@ -17,7 +17,7 @@ class TestTag(unittest.TestCase):
             (" My Work QQ", "my-work-qq")
         ]
         for input_value, expected_value in test_cases:
-            with self.subTest(input=input_value, expected=expected_value):  
+            with self.subTest(input=input_value, expected=expected_value):
                 tag = Tag(input_value)
                 self.assertEqual(tag.value, expected_value)
 
