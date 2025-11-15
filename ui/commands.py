@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple, Callable
 from core.app_context import AppContext
 
 from ui.error_util import input_error
+from ui.output_util import Out
 
 from services import (
     CreateNoteReq,
@@ -146,7 +147,7 @@ def all_contacts(args, ctx: AppContext):
     contacts = ctx.contacts.all()
 
     if not contacts:
-        return "No contacts found in the book."
+        return Out.warn("No contacts found in the book.")
 
     lines = ["All contacts:"]
     for contact in contacts:
@@ -177,9 +178,9 @@ def upcoming_birthdays(args, ctx: AppContext):
     contacts = ctx.contacts.upcoming_birthdays(num_days)
 
     if not contacts:
-        return f"No upcoming birthdays in the book for nearest [{num_days}] days"
+        return Out.warn(f"No upcoming birthdays in the book for closest [{num_days}] days")
 
-    lines = [f"Upcoming birthdays for nearest [{num_days}] days:"]
+    lines = [f"Upcoming birthdays for closest [{num_days}] days:"]
     for contact, next_birthday in contacts:
         lines.append(f"{contact.name.value}: {next_birthday.strftime('%d.%m.%Y')}")
     return "\n".join(lines)
@@ -330,38 +331,43 @@ def all_notes(args, ctx: AppContext):
 
 # flake8: noqa: E501
 def help_command(args, ctx: AppContext):
-    print("Available commands:\n"
-          "# General commands\n"
-          "  hello                                     - Show greeting\n"
-          "  help                                      - Show possible commands\n"
-          "  close, exit                               - Exit the bot\n"
-          "\n\n# Contact's commands\n"
-          "  add <username> <phone>                    - Add new contact with phone or add phone to existing contact\n"
-          "  change <username> <old_phone> <new_phone> - Update contact's phone\n"
-          "  phone <username>                          - Show contact's phone number(s)\n"
-          "  all                                       - Show all contacts\n"
-          "  find <search_text>                        - Find matching contacts; use * symbol to skip exact matching\n"
-          "  set-birthday <username> <DD.MM.YYYY>      - Set birthday to contact\n"
-          "  show-birthday <username>                  - Show contact's birthday\n"
-          "  birthdays <number_of_days>                - Show upcoming birthdays in next [num] days\n"
-          "  set-email <username> <email>              - Set email to contact\n"
-          "  set-address <username> <address>          - Set address to contact\n"
-          "  delete-phone <username> <phone>           - Delete phone from contact\n"
-          "  delete-email <username>                   - Delete contact's email address\n"
-          "  delete-birthday <username>                - Delete contact's birthday address\n"
-          "  delete-address <username>                 - Delete contact's address address\n"
-          "  delete-contact <username>                 - Delete contact\n"
-          "\n\n# Note's commands\n"
-          "  add-note <note>                           - Add note, returns created note\n"
-          "  note <note-id>                            - Show title, body, tags of the note\n"
-          "  notes                                     - Show all notes\n"
-          "  edit-note-title <note-id> <new-title>     - Change note's title\n"
-          "  edit-note-body <note-id> <new-body>       - Change note's body\n"
-          "  edit-note-tags <note-id> <tags>           - Change note's tags(comma separated list)\n"
-          "  find-notes <query>                        - Find notes that contain (title/body) specified string\n"
-          "  find-notes-tags <tags>                    - Find notes that have one of specifed tags\n"
-          "  sort-notes-tags <tags>                    - Sort notes by tags\n"
-          "  delete-note <note-id>                     - Delete note by note-id\n")
+    lines = []
+    lines.append(Out.section("Available commands:"))
+    lines.append("")
+    lines.append(Out.section("# General commands"))
+    lines.append(f"  {Out.cmd('hello')} - Show greeting")
+    lines.append(f"  {Out.cmd('help')} - Show possible commands")
+    lines.append(f"  {Out.cmd('close / exit')} - Exit the bot")
+    lines.append("")
+    lines.append(Out.section("# Contact's commands"))
+    lines.append(f"  {Out.cmd('add', '<username> <phone>')} - Add new contact with phone or add phone to existing contact")
+    lines.append(f"  {Out.cmd('change', '<username> <old_phone> <new_phone>')} - Update contact's phone")
+    lines.append(f"  {Out.cmd('phone', '<username>')} - Show contact's phone number(s)")
+    lines.append(f"  {Out.cmd('all')} - Show all contacts")
+    lines.append(f"  {Out.cmd('find', '<search_text>')} - Find matching contacts; use * symbol to skip exact matching")
+    lines.append(f"  {Out.cmd('set-birthday', '<username> <DD.MM.YYYY>')} - Set birthday to contact")
+    lines.append(f"  {Out.cmd('show-birthday', '<username>')} - Show contact's birthday")
+    lines.append(f"  {Out.cmd('birthdays', '<number_of_days>')} - Show upcoming birthdays in next [num] days")
+    lines.append(f"  {Out.cmd('set-email', '<username> <email>')} - Set email to contact")
+    lines.append(f"  {Out.cmd('set-address', '<username> <address>')} - Set address to contact")
+    lines.append(f"  {Out.cmd('delete-phone', '<username> <phone>')} - Delete phone from contact")
+    lines.append(f"  {Out.cmd('delete-email', '<username>')} - Delete contact's email address")
+    lines.append(f"  {Out.cmd('delete-birthday', '<username>')} - Delete contact's birthday address")
+    lines.append(f"  {Out.cmd('delete-address', '<username>')} - Delete contact's address address")
+    lines.append(f"  {Out.cmd('delete-contact', '<username>')} - Delete contact")
+    lines.append("")
+    lines.append(Out.section("# Note's commands"))
+    lines.append(f"  {Out.cmd('add-note', '<note>')} - Add note, returns created note")
+    lines.append(f"  {Out.cmd('note', '<note-id>')} - Show title, body, tags of the note")
+    lines.append(f"  {Out.cmd('notes')} - Show all notes")
+    lines.append(f"  {Out.cmd('edit-note-title', '<note-id> <new-title>')} - Change note's title")
+    lines.append(f"  {Out.cmd('edit-note-body', '<note-id> <new-body>')} - Change note's body")
+    lines.append(f"  {Out.cmd('edit-note-tags', '<note-id> <tags>')} - Change note's tags(comma separated list)")
+    lines.append(f"  {Out.cmd('find-notes', '<query>')} - Find notes that contain (title/body) specified string")
+    lines.append(f"  {Out.cmd('find-notes-tags', '<tags>')} - Find notes that have one of specifed tags")
+    lines.append(f"  {Out.cmd('sort-notes-tags', '<tags>')} - Sort notes by tags")
+    lines.append(f"  {Out.cmd('delete-note', '<note-id>')} - Delete note by note-id")
+    print("\n".join(lines))
 
 
 def exit_command(ctx: AppContext):
@@ -380,7 +386,7 @@ def parse_input(user_input: str) -> Tuple[str, List[str]]:
 
 
 commands: Dict[str, Callable[[List[str], AppContext], str]] = {
-    "hello": lambda args, ctx: "How can I help you?",
+    "hello": lambda args, ctx: Out.success("How can I help you?"),
     "help": help_command,
 
     # Contact's commands

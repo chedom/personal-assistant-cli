@@ -1,6 +1,7 @@
 from typing import Self, Collection
 from datetime import datetime as DateTime
 from models.values import Field, Tag, Title
+from ui.output_util import Out
 
 
 class Note:
@@ -23,21 +24,24 @@ class Note:
         self.__updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
 
     def __str__(self) -> str:
+        tags_str = ",".join([str(t) for t in self.__tags]) if self.__tags else "—"
         return (
-            f"ID: {self.__note_id}\n"
-            f"Title: {self.__title}\n"
-            f"Body: {self.__body}\n"
-            f"Tags: {','.join([str(t) for t in self.__tags])}\n"
-            f"Created at: {self.__created_at:%d.%m.%Y}\n"
-            f"Updated at: {self.__updated_at:%d.%m.%Y}"
+            f"{Out.SECTION}Note:\n"
+            f"  {Out.PARAM}ID: {Out.INFO}{self.__note_id}\n"
+            f"  {Out.PARAM}Title: {Out.INFO}{self.__title}\n"
+            f"  {Out.PARAM}Body: {Out.INFO}{self.__body}\n"
+            f"  {Out.PARAM}Tags: {Out.INFO}{tags_str}\n"
+            f"  {Out.PARAM}Created at: {Out.INFO}{self.__created_at:%d.%m.%Y}\n"
+            f"  {Out.PARAM}Updated at: {Out.INFO}{self.__updated_at:%d.%m.%Y}"
         )
 
     def preview(self) -> str:
         """Get a preview of the note"""
+        tags_str = ",".join([v.value for v in self.__tags]) if self.__tags else "—"
         return (
-            f"{self.__note_id}, Title: {self.field_preview(self.__title)}\n"
-            f"{self.__updated_at:%d.%m.%Y} Body: {self.field_preview(self.__body)}\n"
-            f"Tags: {','.join([v.value for v in self.__tags])}\n"
+            f"{Out.SECTION}Note: {Out.INFO}{self.field_preview(self.__title)} (ID: {self.__note_id})\n"
+            f"{Out.PARAM}{self.__updated_at:%d.%m.%Y} Body: {Out.INFO}{self.field_preview(self.__body)}\n"
+            f"{Out.PARAM}Tags: {Out.INFO}{tags_str}\n"
         )
 
     @property

@@ -1,6 +1,8 @@
 import math
 from services.contacts_service import ContactsService
 
+from ui.output_util import Out
+
 from services import NotesService
 from ui.factory import create_notes_repo, create_contacts_repo, SerializerType
 
@@ -22,8 +24,8 @@ def welcome_message():
     space = (header_width - len(message) - (border_width * 2)) / 2
     print(
         divider,
-        f"\n|{' ' * math.floor(space)}{message}{' ' * math.ceil(space)}|",
-        f"\n{divider}"
+        f"\n|{' ' * math.floor(space)}{Out.section(message)}{' ' * math.ceil(space)}|",
+        f"\n{Out.section(divider)}"
     )
 
 
@@ -41,7 +43,7 @@ def main():
 
     while True:
         try:
-            user_input = input("Enter a command: ").strip()
+            user_input = input(Out.input_prompt("Enter a command: ")).strip()
             if not user_input:
                 continue
             result = handle_command(user_input, ctx)

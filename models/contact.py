@@ -2,6 +2,7 @@ import re
 from typing import Optional, Self
 from exceptions import AlreadyExistError, NotFoundError
 from models.values import Name, Email, Phone, Address, Birthday
+from ui.output_util import Out
 
 
 class Contact:
@@ -92,16 +93,20 @@ class Contact:
 
     def __str__(self) -> str:
         phones_str = " | ".join(p.value for p in self.phones) or "—"
-        parts = [f"Contact: {self.name.value}", f"phones: {phones_str}"]
+        parts = [
+            f"{Out.SECTION}Contact:",
+            f"  {Out.PARAM}Name: {Out.INFO}{self.name.value}",
+            f"  {Out.PARAM}Phones: {Out.INFO}{phones_str}",
+        ]
 
         if self.email:
-            parts.append(f"email: {self.email}")
+            parts.append(f"  {Out.PARAM}email: {self.email}")
         if self.birthday:
-            parts.append(f"birthday: {self.birthday}")
+            parts.append(f"  {Out.PARAM}birthday: {self.birthday}")
         if self.address:
-            parts.append(f"address: {self.address}")
+            parts.append(f"  {Out.PARAM}address: {self.address}")
 
-        return ", ".join(parts)
+        return "\n".join(parts)
 
     def to_dict(self) -> dict:
         """Convert the contact to a dictionary"""
