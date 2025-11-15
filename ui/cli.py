@@ -1,4 +1,5 @@
 import math
+import sys
 from services.contacts_service import ContactsService
 
 from ui.output_util import Out
@@ -49,8 +50,11 @@ def init_autocomplete(available_commands: list):
 def main():
     init_autocomplete(get_available_commands())
 
-    contacts_repository = create_contacts_repo("contacts", SerializerType.PICKLE)
-    notes_repository = create_notes_repo("notes", SerializerType.PICKLE)
+    is_demo = "--demo" in sys.argv
+    storage_dir = "demo/" if is_demo else ""
+
+    contacts_repository = create_contacts_repo(f"{storage_dir}contacts", SerializerType.PICKLE)
+    notes_repository = create_notes_repo(f"{storage_dir}notes", SerializerType.PICKLE)
 
     ctx = AppContext(
         ContactsService(contacts_repository),
@@ -74,8 +78,9 @@ def main():
             handle_command("exit", ctx)
             break
 
-    notes_repository.flush()
-    contacts_repository.flush()
+    if not is_demo:
+        notes_repository.flush()
+        contacts_repository.flush()
 
 
 if __name__ == "__main__":

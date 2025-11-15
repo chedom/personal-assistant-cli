@@ -25,12 +25,8 @@ The tool provides a structured way to manage contacts and notes, offering a set 
 - Structured, colorized help command for easy navigation.
 - Centralized styling system (`ui/output_util.py`).
 - Error-handling decorator for consistent exception formatting.
-- Persistent storage using repositories (pickle or other serializers).
+- Persistent storage using repositories (pickle or JSON serializers).
 
-## Start
-```bash
-python main.py
-```
 ## Python Virtual Environment & PEP8 Linting Setup
 
 This project uses a Python virtual environment (`venv`) and a `Makefile`
@@ -119,7 +115,19 @@ make clean
 
   `make clean`                            Delete the virtual environment
 
+## Start CLI assistant
+Run the main command-line interface:
+```bash
+python main.py
+```
 
+## Run interactive demo
+Start the demo script to see automated interactions.
+
+During the demo, you can press the **SPACE** key to pause or resume execution:
+```bash
+python demo.py
+```
 
 ## Usage
 
@@ -192,8 +200,10 @@ Errors are formatted consistently and displayed in color.
 
 ## Storage
 
-Contacts and notes are stored using repositories.  
-By default, serialization uses pickle:
+Contacts and notes are stored using **repositories**.
+
+By default, the data is serialized using **pickle**.  
+You can also use the **JSON serializer** if needed.
 
 ```
 storage/pickle_storage.py
