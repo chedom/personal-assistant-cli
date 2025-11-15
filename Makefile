@@ -17,6 +17,9 @@ install: venv
 lint:
 	$(FLAKE8) .
 
+test:
+	$(PYTHON) -m unittest discover -s tests -v
+
 # Remove venv
 clean:
 	rm -rf $(VENV)
