@@ -29,8 +29,8 @@ def add_contact(args, ctx: AppContext):
 
     res = ctx.contacts.add_contact_or_phone(name, phone)
     return {
-        "contact": f"Contact {name} was added to the book.",
-        "phone": f"Phone was added to the contact {name}."
+        "contact": f"Contact {Out.res_attribute(name)} was added to the book.",
+        "phone": f"Phone was added to the contact {Out.res_attribute(name)}."
     }.get(res, '')
 
 
@@ -101,7 +101,7 @@ def delete_email(args, ctx: AppContext):
 
     username = args[0]
     ctx.contacts.set_email(username, None)
-    return f"Email was removed from {username}."
+    return f"Email was removed from {Out.res_attribute(username)}."
 
 
 def delete_birthday(args, ctx: AppContext):
@@ -112,7 +112,7 @@ def delete_birthday(args, ctx: AppContext):
 
     username = args[0]
     ctx.contacts.set_birthday(username, None)
-    return f"Birthday was removed from {username}."
+    return f"Birthday was removed from {Out.res_attribute(username)}."
 
 
 def delete_address(args, ctx: AppContext):
@@ -123,7 +123,7 @@ def delete_address(args, ctx: AppContext):
 
     username = args[0]
     ctx.contacts.set_address(username, None)
-    return f"Address was removed from {username}."
+    return f"Address was removed from {Out.res_attribute(username)}."
 
 
 def find_contacts(args, ctx: AppContext):
@@ -134,13 +134,13 @@ def find_contacts(args, ctx: AppContext):
     contacts = ctx.contacts.find(search)
 
     if not contacts:
-        return f"No contact name, phone, email or birthday found for this search text: {search}"
+        return f"No contact name, phone, email or birthday found for this search text: {Out.res_attribute(search)}"
 
-    lines = ["Found contacts:"]
+    lines = [Out.section("> FOUND CONTACTS <")]
     for contact in contacts:
         lines.append(str(contact))
 
-    return "\n".join(lines)
+    return "\n\n".join(lines)
 
 
 def all_contacts(args, ctx: AppContext):
@@ -149,10 +149,10 @@ def all_contacts(args, ctx: AppContext):
     if not contacts:
         return Out.warn("No contacts found in the book.")
 
-    lines = ["All contacts:"]
+    lines = [Out.section("> ALL CONTACTS <")]
     for contact in contacts:
         lines.append(str(contact))
-    return "\n".join(lines)
+    return "\n\n".join(lines)
 
 
 def get_contact_phones(args, ctx: AppContext):
@@ -163,7 +163,7 @@ def get_contact_phones(args, ctx: AppContext):
 
     username = args[0]
     contact = ctx.contacts.get(username)
-    return 'Phone: ' + ', '.join([p.value for p in contact.phones])
+    return f'{Out.PARAM}Phone: {Out.INFO}' + f'{Out.RESET}, {Out.INFO}'.join([p.value for p in contact.phones]) + f"{Out.RESET}"
 
 
 def upcoming_birthdays(args, ctx: AppContext):
@@ -180,9 +180,9 @@ def upcoming_birthdays(args, ctx: AppContext):
     if not contacts:
         return Out.warn(f"No upcoming birthdays in the book for closest [{num_days}] days")
 
-    lines = [f"Upcoming birthdays for closest [{num_days}] days:"]
+    lines = [f"Upcoming birthdays for closest [{Out.res_attribute(str(num_days))}] days:"]
     for contact, next_birthday in contacts:
-        lines.append(f"{contact.name.value}: {next_birthday.strftime('%d.%m.%Y')}")
+        lines.append(f"{Out.PARAM}{contact.name.value}: {Out.INFO}{next_birthday.strftime('%d.%m.%Y')}{Out.RESET}")
     return "\n".join(lines)
 
 
@@ -193,7 +193,7 @@ def delete_phone(args, ctx: AppContext):
     name = args[0]
     phone = " ".join(args[1:])
     ctx.contacts.del_phone(name, phone)
-    return f"Phone was removed from {name}."
+    return f"Phone was removed from {Out.res_attribute(name)}."
 
 
 def delete_contact(args, ctx: AppContext):
@@ -201,7 +201,7 @@ def delete_contact(args, ctx: AppContext):
         raise ValueError("delete-contact command requires 1 argument: username")
 
     ctx.contacts.del_contact(args[0])
-    return f"Contact {args[0]} deleted successfully"
+    return f"Contact {Out.res_attribute(args[0])} deleted successfully"
 
 
 # ---------- NOTE COMMANDS ----------
@@ -317,7 +317,7 @@ def delete_note(args, ctx: AppContext):
     note_id = _get_note_id(args[0])
     ctx.notes.delete_note(DeleteReq(note_id=note_id))
 
-    return f"Note {note_id} has been successfully deleted"
+    return f"Note {Out.res_attribute(str(note_id))} has been successfully deleted"
 
 
 def all_notes(args, ctx: AppContext):
@@ -331,50 +331,62 @@ def all_notes(args, ctx: AppContext):
 
 # flake8: noqa: E501
 def help_command(args, ctx: AppContext):
-    lines = []
-    lines.append(Out.section("Available commands:"))
-    lines.append("")
-    lines.append(Out.section("# General commands"))
-    lines.append(f"  {Out.cmd('hello')} - Show greeting")
-    lines.append(f"  {Out.cmd('help')} - Show possible commands")
-    lines.append(f"  {Out.cmd('close / exit')} - Exit the bot")
-    lines.append("")
-    lines.append(Out.section("# Contact's commands"))
-    lines.append(f"  {Out.cmd('add', '<username> <phone>')} - Add new contact with phone or add phone to existing contact")
-    lines.append(f"  {Out.cmd('change', '<username> <old_phone> <new_phone>')} - Update contact's phone")
-    lines.append(f"  {Out.cmd('phone', '<username>')} - Show contact's phone number(s)")
-    lines.append(f"  {Out.cmd('all')} - Show all contacts")
-    lines.append(f"  {Out.cmd('find', '<search_text>')} - Find matching contacts; use * symbol to skip exact matching")
-    lines.append(f"  {Out.cmd('set-birthday', '<username> <DD.MM.YYYY>')} - Set birthday to contact")
-    lines.append(f"  {Out.cmd('show-birthday', '<username>')} - Show contact's birthday")
-    lines.append(f"  {Out.cmd('birthdays', '<number_of_days>')} - Show upcoming birthdays in next [num] days")
-    lines.append(f"  {Out.cmd('set-email', '<username> <email>')} - Set email to contact")
-    lines.append(f"  {Out.cmd('set-address', '<username> <address>')} - Set address to contact")
-    lines.append(f"  {Out.cmd('delete-phone', '<username> <phone>')} - Delete phone from contact")
-    lines.append(f"  {Out.cmd('delete-email', '<username>')} - Delete contact's email address")
-    lines.append(f"  {Out.cmd('delete-birthday', '<username>')} - Delete contact's birthday address")
-    lines.append(f"  {Out.cmd('delete-address', '<username>')} - Delete contact's address address")
-    lines.append(f"  {Out.cmd('delete-contact', '<username>')} - Delete contact")
-    lines.append("")
-    lines.append(Out.section("# Note's commands"))
-    lines.append(f"  {Out.cmd('add-note', '<note>')} - Add note, returns created note")
-    lines.append(f"  {Out.cmd('note', '<note-id>')} - Show title, body, tags of the note")
-    lines.append(f"  {Out.cmd('notes')} - Show all notes")
-    lines.append(f"  {Out.cmd('edit-note-title', '<note-id> <new-title>')} - Change note's title")
-    lines.append(f"  {Out.cmd('edit-note-body', '<note-id> <new-body>')} - Change note's body")
-    lines.append(f"  {Out.cmd('edit-note-tags', '<note-id> <tags>')} - Change note's tags(comma separated list)")
-    lines.append(f"  {Out.cmd('find-notes', '<query>')} - Find notes that contain (title/body) specified string")
-    lines.append(f"  {Out.cmd('find-notes-tags', '<tags>')} - Find notes that have one of specifed tags")
-    lines.append(f"  {Out.cmd('sort-notes-tags', '<tags>')} - Sort notes by tags")
-    lines.append(f"  {Out.cmd('delete-note', '<note-id>')} - Delete note by note-id")
-    print("\n".join(lines))
+    def section(title: str) -> str:
+        return Out.section(title)
 
+    general = [
+        (("hello",), "Show greeting"),
+        (("help",), "Show possible commands"),
+        (("close / exit",), "Exit the bot"),
+    ]
 
-def exit_command(ctx: AppContext):
-    # TODO: save records before close
-    # ctx.contacts.save()
-    # ctx.notes.save()
-    return "exit"
+    contacts = [
+        (("add", "<username> <phone>"), "Add new contact or add phone to existing one"),
+        (("change", "<username> <old_phone> <new_phone>"), "Update contact's phone"),
+        (("phone", "<username>"), "Show contact's phone number(s)"),
+        (("all",), "Show all contacts"),
+        (("find", "<search_text>"), "Find matching contacts; supports * wildcard"),
+        (("set-birthday", "<username> <DD.MM.YYYY>"), "Set contact's birthday"),
+        (("show-birthday", "<username>"), "Show contact's birthday"),
+        (("birthdays", "<days>"), "Show upcoming birthdays in N days"),
+        (("set-email", "<username> <email>"), "Set email for contact"),
+        (("set-address", "<username> <address>"), "Set address for contact"),
+        (("delete-phone", "<username> <phone>"), "Delete phone from contact"),
+        (("delete-email", "<username>"), "Delete contact's email"),
+        (("delete-birthday", "<username>"), "Delete contact's birthday"),
+        (("delete-address", "<username>"), "Delete contact's address"),
+        (("delete-contact", "<username>"), "Delete contact"),
+    ]
+
+    notes = [
+        (("add-note", "<note>"), "Add note, returns created note"),
+        (("note", "<note-id>"), "Show note details"),
+        (("notes",), "Show all notes"),
+        (("edit-note-title", "<note-id> <new-title>"), "Change note's title"),
+        (("edit-note-body", "<note-id> <new-body>"), "Change note's body"),
+        (("edit-note-tags", "<note-id> <tags>"), "Change note's tags (comma separated)"),
+        (("find-notes", "<query>"), "Find notes by text in title/body"),
+        (("find-notes-tags", "<tags>"), "Find notes by tags"),
+        (("sort-notes-tags", "<tags>"), "Sort notes by tags"),
+        (("delete-note", "<note-id>"), "Delete note"),
+    ]
+
+    def render_block(title: str, commands: list[tuple[tuple[str, ...], str]]):
+        lines = [section(title)]
+        for (cmd_name, *cmd_args), description in commands:
+            args_str = cmd_args[0] if cmd_args else ""
+            lines.append(f"  {Out.cmd(cmd_name, args_str)} - {description}")
+        return lines
+
+    output = []
+    output += [section("Available commands:"), ""]
+    output += render_block("# General commands", general)
+    output += [""]
+    output += render_block("# Contact's commands", contacts)
+    output += [""]
+    output += render_block("# Note's commands", notes)
+
+    return "\n".join(output)
 
 
 def parse_input(user_input: str) -> Tuple[str, List[str]]:
@@ -386,7 +398,7 @@ def parse_input(user_input: str) -> Tuple[str, List[str]]:
 
 
 commands: Dict[str, Callable[[List[str], AppContext], str]] = {
-    "hello": lambda args, ctx: Out.success("How can I help you?"),
+    "hello": lambda args, ctx: "How can I help you?",
     "help": help_command,
 
     # Contact's commands
@@ -426,9 +438,9 @@ def handle_command(user_input: str, ctx: AppContext) -> str:
 
     match command:
         case "close" | "exit":
-            return exit_command(ctx)
+            return "exit"
         case cmd if cmd in commands:
             return commands[cmd](args, ctx)
         case _:
-            available = ', '.join(sorted(commands.keys()) + ['close', 'exit'])
-            return f"Invalid command. Available commands: {available}"
+            available = f'{Out.RESET}, {Out.COMMAND}'.join(sorted(commands.keys()) + ['close', 'exit'])
+            return f"{Out.ERROR}Invalid command.{Out.RESET}\nAvailable commands: {Out.COMMAND}{available}{Out.RESET}"

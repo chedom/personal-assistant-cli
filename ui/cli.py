@@ -25,7 +25,7 @@ def welcome_message():
     print(
         divider,
         f"\n|{' ' * math.floor(space)}{Out.section(message)}{' ' * math.ceil(space)}|",
-        f"\n{Out.section(divider)}"
+        f"\n{Out.section(divider)}{Out.RESET}"
     )
 
 
@@ -39,7 +39,7 @@ def main():
     )
 
     welcome_message()
-    handle_command('help', ctx)
+    print(handle_command('help', ctx))
 
     while True:
         try:

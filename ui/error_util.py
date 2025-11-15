@@ -7,11 +7,8 @@ def input_error(func):
         try:
             return func(*args, **kwargs)
 
-        except AlreadyExistError as e:
-            return Out.error(e.message)
-
-        except NotFoundError as e:
-            return Out.error(e.message)
+        except (AlreadyExistError, NotFoundError) as e:
+            return f"{Out.ERROR}{e.message}{Out.RESET}"
 
         except KeyError as e:
             return Out.error(str(e))

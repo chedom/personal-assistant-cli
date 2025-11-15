@@ -26,21 +26,24 @@ class Note:
     def __str__(self) -> str:
         tags_str = ",".join([str(t) for t in self.__tags]) if self.__tags else "—"
         return (
-            f"{Out.SECTION}Note:\n"
-            f"  {Out.PARAM}ID: {Out.INFO}{self.__note_id}\n"
-            f"  {Out.PARAM}Title: {Out.INFO}{self.__title}\n"
-            f"  {Out.PARAM}Body: {Out.INFO}{self.__body}\n"
-            f"  {Out.PARAM}Tags: {Out.INFO}{tags_str}\n"
-            f"  {Out.PARAM}Created at: {Out.INFO}{self.__created_at:%d.%m.%Y}\n"
-            f"  {Out.PARAM}Updated at: {Out.INFO}{self.__updated_at:%d.%m.%Y}"
+            f"{Out.SECTION}Note:{Out.RESET}\n"
+            f"{Out.PARAM} > ID: {Out.INFO}{self.__note_id}{Out.RESET}\n"
+            f"{Out.PARAM} > Title: {Out.INFO}{self.__title}{Out.RESET}\n"
+            f"{Out.PARAM} > Body: {Out.INFO}{self.__body}{Out.RESET}\n"
+            f"{Out.PARAM} > Tags: {Out.INFO}{tags_str}{Out.RESET}\n"
+            f"{Out.PARAM} > Created at: "
+            f"{Out.INFO}{self.__created_at:%d.%m.%Y}{Out.RESET}\n"
+            f"{Out.PARAM} > Updated at: "
+            f"{Out.INFO}{self.__updated_at:%d.%m.%Y}{Out.RESET}"
         )
 
     def preview(self) -> str:
         """Get a preview of the note"""
         tags_str = ",".join([v.value for v in self.__tags]) if self.__tags else "—"
         return (
-            f"{Out.SECTION}Note: {Out.INFO}{self.field_preview(self.__title)} (ID: {self.__note_id})\n"
-            f"{Out.PARAM}{self.__updated_at:%d.%m.%Y} Body: {Out.INFO}{self.field_preview(self.__body)}\n"
+            f"{Out.SECTION}Note #{self.__note_id} ({self.__updated_at:%d.%m.%Y}): "
+            f"{Out.INFO}{self.field_preview(self.__title)}\n"
+            f"{Out.PARAM}Body: {Out.INFO}{self.field_preview(self.__body)}\n"
             f"{Out.PARAM}Tags: {Out.INFO}{tags_str}\n"
         )
 

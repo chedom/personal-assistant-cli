@@ -92,19 +92,22 @@ class Contact:
         return False
 
     def __str__(self) -> str:
-        phones_str = " | ".join(p.value for p in self.phones) or "—"
+        phones_str = f"{Out.RESET} | {Out.INFO}".join(
+            p.value for p in self.phones
+        ) or "—"
         parts = [
-            f"{Out.SECTION}Contact:",
-            f"  {Out.PARAM}Name: {Out.INFO}{self.name.value}",
-            f"  {Out.PARAM}Phones: {Out.INFO}{phones_str}",
+            f"{Out.SECTION}Contact:{Out.RESET} {Out.INFO}{self.name.value}{Out.RESET}",
+            f"{Out.PARAM} > Phones: {Out.INFO}{phones_str}{Out.RESET}",
         ]
 
         if self.email:
-            parts.append(f"  {Out.PARAM}email: {self.email}")
+            parts.append(f"{Out.PARAM} > Email: {Out.INFO}{self.email}{Out.RESET}")
         if self.birthday:
-            parts.append(f"  {Out.PARAM}birthday: {self.birthday}")
+            parts.append(
+                f"{Out.PARAM} > Birthday: {Out.INFO}{self.birthday}{Out.RESET}"
+            )
         if self.address:
-            parts.append(f"  {Out.PARAM}address: {self.address}")
+            parts.append(f"{Out.PARAM} > Address: {Out.INFO}{self.address}{Out.RESET}")
 
         return "\n".join(parts)
 
