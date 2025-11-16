@@ -23,6 +23,7 @@ class Note:
         self.__updated_at: DateTime = updated_at if updated_at is not None else created_at # noqa
 
     def __str__(self) -> str:
+        """Return a human-readable string representation of the note."""
         return (
             f"ID: {self.__note_id}\n"
             f"Title: {self.__title}\n"

@@ -8,10 +8,13 @@ from models.values import Email, Phone, Address, Birthday
 
 
 class ContactsService:
+    """Service layer for managing contacts."""
     def __init__(self, repo: ContactsRepository):
+        """Initialize the ContactsService with a repository."""
         self.repo = repo
 
     def add_contact(self, name: str, phone: str) -> Contact:
+        """Add a new contact with one phone."""
         new_contact = Contact(name)
         new_contact.add_phone(Phone(phone))
 
@@ -19,14 +22,17 @@ class ContactsService:
         return new_contact
 
     def get(self, name: str) -> Contact | None:
+        """Get a contact by name."""
         return self.repo.get(name)
 
     def add_phone(self, name: str, phone: str) -> bool:
+        """Add a phone to an existing contact."""
         contact = self.repo.get(name)
         contact.add_phone(Phone(phone))
         self.repo.save(contact)
 
     def add_contact_or_phone(self, name: str, phone: str) -> str:
+        """Add contact or phone if contact exists. Returns 'contact' or 'phone'."""
         try:
             self.add_contact(name, phone)
             return 'contact'
@@ -35,6 +41,7 @@ class ContactsService:
             return 'phone'
 
     def set_email(self, name: str, raw_email: Optional[str]):
+        """Set or remove email for a contact."""
         contact = self.repo.get(name)
         email = None
 
@@ -45,6 +52,7 @@ class ContactsService:
         self.repo.save(contact)
 
     def set_birthday(self, name: str, raw_birthday: Optional[str]):
+        """Set or remove birthday for a contact."""
         contact = self.repo.get(name)
         birthday = None
 
@@ -55,6 +63,7 @@ class ContactsService:
         self.repo.save(contact)
 
     def set_address(self, name: str, raw_address: Optional[str]):
+        """Set or remove address for a contact."""
         contact = self.repo.get(name)
         address = None
         if raw_address is not None:
@@ -64,11 +73,13 @@ class ContactsService:
         self.repo.save(contact)
 
     def edit_phone(self, name: str, prev_phone: str, new_phone: str) -> None:
+        """Replace an existing phone with a new one."""
         contact = self.repo.get(name)
         contact.edit_phone(Phone(prev_phone), Phone(new_phone))
         self.repo.save(contact)
 
     def del_phone(self, name: str, phone: str) -> bool:
+        """Delete a phone from a contact. Returns True if deleted."""
         existing_contact = self.repo.get(name)
         if not existing_contact:
             raise KeyError(f"User with name {name} does not exist")
@@ -80,6 +91,7 @@ class ContactsService:
             return False
 
     def del_contact(self, name: str):
+        """Delete a contact by name."""
         existing_contact = self.repo.get(name)
         if not existing_contact:
             raise KeyError(f"User with name {name} does not exist")
@@ -87,13 +99,16 @@ class ContactsService:
         self.repo.delete(name)
 
     def find(self, search: str) -> Iterable[Contact]:
+        """Search contacts by string."""
         return self.repo.find(search)
 
     def all(self) -> Iterable[Contact]:
+        """Return all contacts."""
         return self.repo.all()
 
     def upcoming_birthdays(
             self, num_days: int) -> Iterable[tuple[Contact, date]]:
+        """Return contacts with birthdays in the next num_days."""
         contacts = self.all()
         today = date.today()
         limit_day = today + timedelta(days=num_days)

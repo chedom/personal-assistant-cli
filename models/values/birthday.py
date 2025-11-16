@@ -6,6 +6,12 @@ from models.values import Field
 
 class Birthday(Field):
     def __init__(self, value: str):
+        """
+        Initialize the Birthday field with a normalized and validated date.
+
+        Args:
+            value (str): The raw birthday string in format DD.MM.YYYY (or with / or -).
+        """
         normalized_value = Birthday.normalize(value)
         Birthday.validate(normalized_value)
         super().__init__(
@@ -14,12 +20,33 @@ class Birthday(Field):
 
     @staticmethod
     def normalize(value: str) -> str:
+        """
+        Normalize a birthday string by stripping spaces and
+        replacing separators with dots.
+
+        Args:
+            value (str): Raw birthday string.
+
+        Returns:
+            str: Normalized birthday string in format DD.MM.YYYY.
+        """
         value = value.strip()
         value = re.sub(r"[/-]", ".", value)
         return value
 
     @staticmethod
     def validate(value: str):
+        """
+        Validate that the birthday is non-empty, correctly formatted,
+        represents a real calendar date, and is not in the future.
+
+        Args:
+            value (str): Normalized birthday string.
+
+        Raises:
+            ValueError: If the birthday is empty, incorrectly formatted,
+            invalid, or in the future.
+        """
         if not value:
             raise ValueError("Birthday should not be empty")
 

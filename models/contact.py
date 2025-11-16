@@ -85,6 +85,7 @@ class Contact:
         return any(search_lower == val.casefold() for val in search_values)
 
     def del_phone(self, phone: Phone):
+        """Deletes phone from contact"""
         for i, phone_number in enumerate(self.phones):
             if phone_number == phone:
                 del self.phones[i]
@@ -92,6 +93,7 @@ class Contact:
         return False
 
     def __str__(self) -> str:
+        """Return a human-readable string representation of the contact."""
         phones_str = " | ".join(p.value for p in self.phones) or "—"
         parts = [f"Contact: {self.name.value}", f"phones: {phones_str}"]
 

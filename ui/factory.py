@@ -6,6 +6,7 @@ from models import Note, Contact
 
 
 class SerializerType(Enum):
+    """Enumeration of supported serializer types."""
     JSON = "json"
     PICKLE = "pickle"
 

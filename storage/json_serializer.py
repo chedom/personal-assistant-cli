@@ -8,6 +8,7 @@ T = TypeVar("T")
 
 
 class JsonSerializer(Serializer[K, T], Generic[K, T]):
+    """JSON-based serializer for storing items."""
     def __init__(
         self,
         to_dict: Callable[[T], dict],
@@ -21,10 +22,12 @@ class JsonSerializer(Serializer[K, T], Generic[K, T]):
         self.__from_dict: Callable[[dict], T] = from_dict
 
     def to_bytes(self, items: dict[K, T]) -> bytes:
+        """Serialize items to JSON bytes."""
         payload = {self.__to_key(k): self.__to_dict(v) for k, v in items.items()}
         return json.dumps(payload, ensure_ascii=False).encode("utf-8")
 
     def from_bytes(self, data: bytes) -> dict[K, T]:
+        """Deserialize JSON bytes into a dictionary of items."""
         raw = json.loads(data.decode("utf-8"))
         if not isinstance(raw, dict):
             raise ValueError("JSON root must be an object")
@@ -32,4 +35,5 @@ class JsonSerializer(Serializer[K, T], Generic[K, T]):
         return {self.__from_key(k): self.__from_dict(v) for k, v in raw.items()}
 
     def extension(self) -> str | None:
+        """Return the file extension for JSON serialization."""
         return 'json'

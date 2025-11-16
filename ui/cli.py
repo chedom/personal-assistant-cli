@@ -10,6 +10,7 @@ from ui.commands import handle_command, get_available_commands
 
 
 def welcome_message():
+    """Print a stylized welcome message to the user."""
     header_width = 110
     divider = "-" * header_width
     border_width = 1
@@ -23,6 +24,9 @@ def welcome_message():
 
 
 def init_autocomplete(available_commands: list):
+    """
+    Initialize command-line autocomplete for available commands.
+    """
     try:
         # Support arrows, command history on unix systems and cmd autocomplete
         import readline  # noqa: F401

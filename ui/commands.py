@@ -21,6 +21,7 @@ from services import (
 # ---------- CONTACT COMMANDS ----------
 
 def add_contact(args, ctx: AppContext):
+    """Add a new contact or add phone to an existing contact."""
     if len(args) < 2:
         raise ValueError("add command requires 2 arguments: username and phone")
 
@@ -35,6 +36,7 @@ def add_contact(args, ctx: AppContext):
 
 
 def set_email(args, ctx: AppContext):
+    """Set email for a contact."""
     if len(args) < 2:
         raise ValueError(
             "set-email command requires 2 arguments: username and email"
@@ -46,6 +48,7 @@ def set_email(args, ctx: AppContext):
 
 
 def set_birthday(args, ctx: AppContext):
+    """Set birthday for a contact."""
     if len(args) < 2:
         raise ValueError(
             "set-birthday command requires 2 arguments: username and birthday"
@@ -57,6 +60,7 @@ def set_birthday(args, ctx: AppContext):
 
 
 def show_birthday(args, ctx: AppContext):
+    """Show birthday of a contact."""
     if len(args) < 1:
         raise ValueError(
             "show-birthday command requires 1 arguments: username"
@@ -71,6 +75,7 @@ def show_birthday(args, ctx: AppContext):
 
 
 def set_address(args, ctx: AppContext):
+    """Set address for a contact."""
     if len(args) < 2:
         raise ValueError(
             "set-address command requires 2 arguments: username and address"
@@ -83,6 +88,7 @@ def set_address(args, ctx: AppContext):
 
 
 def edit_phone(args, ctx: AppContext):
+    """Edit an existing phone number of a contact."""
     if len(args) < 3:
         raise ValueError(
             "edit command requires 3 arguments: username prev phone number and new phone"
@@ -94,6 +100,7 @@ def edit_phone(args, ctx: AppContext):
 
 
 def delete_email(args, ctx: AppContext):
+    """Remove email from a contact."""
     if len(args) < 1:
         raise ValueError(
             "delete email command requires 1 arguments: username"
@@ -105,6 +112,7 @@ def delete_email(args, ctx: AppContext):
 
 
 def delete_birthday(args, ctx: AppContext):
+    """Remove birthday from a contact."""
     if len(args) < 1:
         raise ValueError(
             "delete birthday command requires 1 arguments: username"
@@ -116,6 +124,7 @@ def delete_birthday(args, ctx: AppContext):
 
 
 def delete_address(args, ctx: AppContext):
+    """Remove address from a contact."""
     if len(args) < 1:
         raise ValueError(
             "delete address command requires 1 arguments: username"
@@ -127,6 +136,7 @@ def delete_address(args, ctx: AppContext):
 
 
 def find_contacts(args, ctx: AppContext):
+    """Find contacts by name, phone, email, birthday, or address."""
     if not args:
         raise ValueError("Find command requires a search_text argument")
 
@@ -144,6 +154,7 @@ def find_contacts(args, ctx: AppContext):
 
 
 def all_contacts(args, ctx: AppContext):
+    """List all contacts in the contact book."""
     contacts = ctx.contacts.all()
 
     if not contacts:
@@ -156,6 +167,7 @@ def all_contacts(args, ctx: AppContext):
 
 
 def get_contact_phones(args, ctx: AppContext):
+    """Get all phone numbers of a contact."""
     if len(args) < 1:
         raise ValueError(
             "get contact command requires 1 arguments: username"
@@ -168,6 +180,7 @@ def get_contact_phones(args, ctx: AppContext):
 
 
 def upcoming_birthdays(args, ctx: AppContext):
+    """List upcoming birthdays in a given number of days."""
     if not args:
         raise ValueError("Command requires number of days as argument")
 
@@ -188,6 +201,7 @@ def upcoming_birthdays(args, ctx: AppContext):
 
 
 def delete_phone(args, ctx: AppContext):
+    """Delete a phone number from a contact."""
     if len(args) < 2:
         raise ValueError("delete-phone command requires 2 arguments: username and phone")
 
@@ -198,6 +212,7 @@ def delete_phone(args, ctx: AppContext):
 
 
 def delete_contact(args, ctx: AppContext):
+    """Delete a contact by name."""
     if len(args) < 1:
         raise ValueError("delete-contact command requires 1 argument: username")
 
@@ -207,6 +222,7 @@ def delete_contact(args, ctx: AppContext):
 
 # ---------- NOTE COMMANDS ----------
 def _get_note_id(note_id: str):
+    """Convert note_id string to integer and validate."""
     try:
         return int(note_id)
     except ValueError:
@@ -214,6 +230,7 @@ def _get_note_id(note_id: str):
 
 
 def add_note(args, ctx: AppContext):
+    """Add a new note with title, body, and tags."""
     if len(args) < 3:
         raise ValueError("add note command requires 3 argument: title body tags")
 
@@ -229,6 +246,7 @@ def add_note(args, ctx: AppContext):
 
 
 def get_note(args, ctx: AppContext):
+    """Retrieve a note by its ID."""
     if len(args) < 1:
         raise ValueError("get note command requires 1 argument: note_id")
 
@@ -240,6 +258,7 @@ def get_note(args, ctx: AppContext):
 
 
 def edit_note_title(args, ctx: AppContext):
+    """Edit the title of a note."""
     if len(args) < 2:
         raise ValueError("edit note title command requires 2 argument: note_id title")
 
@@ -252,6 +271,7 @@ def edit_note_title(args, ctx: AppContext):
 
 
 def edit_note_body(args, ctx: AppContext):
+    """Edit the body of a note."""
     if len(args) < 2:
         raise ValueError("edit note body command requires 2 argument: note_id body")
 
@@ -265,6 +285,7 @@ def edit_note_body(args, ctx: AppContext):
 
 
 def edit_note_tags(args, ctx: AppContext):
+    """Edit the tags of a note."""
     if len(args) < 2:
         raise ValueError("edit note tags command requires 2 argument: note_id tags")
 
@@ -278,6 +299,7 @@ def edit_note_tags(args, ctx: AppContext):
 
 
 def find_notes(args, ctx: AppContext):
+    """Find notes by text query."""
     if len(args) < 1:
         raise ValueError("find notes command requires 1 argument: query")
 
@@ -290,6 +312,7 @@ def find_notes(args, ctx: AppContext):
 
 
 def find_notes_by_tags(args, ctx: AppContext):
+    """Find notes matching specific tags."""
     if len(args) < 1:
         raise ValueError("find notes by tags command requires 1 argument: tags")
 
@@ -301,6 +324,7 @@ def find_notes_by_tags(args, ctx: AppContext):
 
 
 def sort_notes_by_tags(args, ctx: AppContext):
+    """Sort notes by number of matching tags."""
     if len(args) < 1:
         raise ValueError("sort notes by tag command requires 1 argument: tags")
 
@@ -312,6 +336,7 @@ def sort_notes_by_tags(args, ctx: AppContext):
 
 
 def delete_note(args, ctx: AppContext):
+    """Delete a note by its ID."""
     if len(args) < 1:
         raise ValueError("delete note command requires 1 argument: tags")
 
@@ -322,6 +347,7 @@ def delete_note(args, ctx: AppContext):
 
 
 def all_notes(args, ctx: AppContext):
+    """List all notes."""
     notes = ctx.notes.all()
 
     return '\n'.join([Out.note_preview(n) for n in notes])
@@ -332,6 +358,7 @@ def all_notes(args, ctx: AppContext):
 
 # flake8: noqa: E501
 def help_command(args, ctx: AppContext):
+    """Return a help string listing all available commands."""
     def section(title: str) -> str:
         return Out.section(title)
 
@@ -391,6 +418,7 @@ def help_command(args, ctx: AppContext):
 
 
 def parse_input(user_input: str) -> Tuple[str, List[str]]:
+    """Parse user input into command and argument list."""
     args = shlex.split(user_input)
     if not args:
         return "", []
@@ -435,6 +463,7 @@ commands: Dict[str, Callable[[List[str], AppContext], str]] = {
 
 @input_error
 def handle_command(user_input: str, ctx: AppContext) -> str:
+    """Process a user command and return the result or error message."""
     command, args = parse_input(user_input)
 
     match command:
@@ -448,4 +477,5 @@ def handle_command(user_input: str, ctx: AppContext) -> str:
 
 
 def get_available_commands():
+    """Return a list of all available command strings."""
     return commands.keys()

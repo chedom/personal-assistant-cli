@@ -20,6 +20,7 @@ from services.notes_request import (
 class NotesService:
     """Service for the notes"""
     def __init__(self, repo: NotesRepository, id_gen: IDGenerator):
+        """Initialize with a repository and ID generator."""
         self.__repo: NotesRepository = repo
         self.__id_gen: IDGenerator = id_gen
 
@@ -37,6 +38,7 @@ class NotesService:
         return self.__repo.get(req.note_id)
 
     def edit_title(self, req: EditTitleReq) -> Note:
+        """Edit the title of a note."""
         note = self.__repo.get(req.note_id)
         note.edit_note(new_title=req.title)
         self.__repo.save(note)
@@ -44,6 +46,7 @@ class NotesService:
         return note
 
     def edit_body(self, req: EditBodyReq) -> Note:
+        """Edit the body of a note."""
         note = self.__repo.get(req.note_id)
         note.edit_note(new_body=req.body)
         self.__repo.save(note)
@@ -51,6 +54,7 @@ class NotesService:
         return note
 
     def edit_tags(self, req: EditTagsReq) -> Note:
+        """Edit the tags of a note."""
         note = self.__repo.get(req.note_id)
         tags = self.__prepare_tags(req.tags)
         note.edit_note(new_tags=tags)
@@ -80,11 +84,14 @@ class NotesService:
         return notes
 
     def all(self) -> Iterable[Note]:
+        """Return all notes."""
         return self.__repo.all()
 
     def delete_note(self, req: DeleteReq) -> None:
+        """Delete a note by ID."""
         note = self.__repo.get(req.note_id)
         self.__repo.delete(note.note_id)
 
     def __prepare_tags(self, tags: list[str]) -> set[Tag]:
+        """Normalize a list of tag strings into a set of Tag objects."""
         return {Tag(t) for t in tags}
