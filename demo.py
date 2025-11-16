@@ -60,7 +60,7 @@ def pause_listener():
 
 def main():
     proc = subprocess.Popen(
-        ["python", "-u", "main.py", "--demo"],  # unbuffered
+        [sys.executable, "-u", "main.py", "--demo"],  # unbuffered
         stdin=subprocess.PIPE,
         stdout=sys.stdout,  # output to current console
         stderr=sys.stderr,
