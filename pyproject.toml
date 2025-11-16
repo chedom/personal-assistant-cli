@@ -43,6 +43,7 @@ dev = [
     "mccabe==0.7.0",
     "pycodestyle==2.14.0",
     "pyflakes==3.4.0",
+    "pyreadline3==3.5.4",
 ]
 
 [project.scripts]
