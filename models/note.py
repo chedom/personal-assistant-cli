@@ -1,4 +1,4 @@
-from typing import Self, Collection
+from typing import Collection
 from datetime import datetime as DateTime
 from models.values import Field, Tag, Title
 
@@ -118,7 +118,7 @@ class Note:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> "Note":
         """Convert the dictionary to a note"""
         tags = {Tag(t) for t in data["tags"]}
         return cls(

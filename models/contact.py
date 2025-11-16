@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Self
+from typing import Optional
 
 from exceptions import AlreadyExistError, NotFoundError
 from models.values import Name, Email, Phone, Address, Birthday
@@ -117,7 +117,7 @@ class Contact:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> Self:
+    def from_dict(cls, data: dict) -> "Contact":
         """Convert the dictionary to a contact"""
         return cls(
             name=data["name"],
